@@ -1,0 +1,40 @@
+.publication-nav {
+  margin-top: 30px;
+
+  .public-nav-item {
+    width: 50%;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.15;
+    cursor: pointer;
+
+    &:first-child {
+      float: left;
+      padding-right: 15px;
+
+      &:hover {
+        background: linear-gradient(to left, transparent, #ededed);
+      }
+    }
+
+    &:last-child {
+      float: right;
+      text-align: right;
+      padding-left: 15px;
+
+      &:hover {
+        background: linear-gradient(to right, transparent, #ededed);
+      }
+    }
+
+    img {
+      width: 120px;
+      height: 80px;
+      object-fit: cover;
+      max-width: 80%;
+      display: inline;
+      margin-bottom: 10px;
+    }
+  }
+}
