@@ -1,0 +1,36 @@
+#lift {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 50px;
+  height: 100%;
+  transition: background-color, opacity .2s ease-in-out;
+  opacity: 0;
+
+  &.visible {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, .5);
+
+    &:before {
+      color: #FFF;
+    }
+  }
+
+  &:before {
+    transition: color .2s ease-in-out;
+    display: block;
+    width: 100%;
+    content: '\f062';
+    color: #000;
+    font-family: FontAwesome, sans-serif;
+    font-size: 18px;
+    position: absolute;
+    left: 0;
+    bottom: 30px;
+    text-align: center;
+  }
+}

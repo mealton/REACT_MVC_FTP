@@ -139,69 +139,8 @@ main {
   grid-gap: 40px;
 }
 
-aside {
-  grid-area: sidebar;
-  width: 300px;
-  box-sizing: border-box;
-  padding: 0 10px;
 
-  .search-form {
-    display: none;
-  }
-
-  .aside-inner {
-    &.fixed {
-      position: fixed;
-      @include noscroll;
-      height: calc(100vh - 100px);
-      bottom: 0;
-      overflow: auto;
-    }
-  }
-
-
-  h3 {
-    margin: 0 auto 30px;
-    text-align: center;
-    font-size: 20px;
-  }
-
-  .popular-item {
-    cursor: pointer;
-    padding-bottom: 30px;
-
-    img {
-      margin-bottom: 15px;
-    }
-
-    h4 {
-      font-size: 18px;
-    }
-
-    .fa-icon {
-      &:before {
-        margin-left: 15px;
-        display: inline-block;
-        font-size: 14px;
-        font-family: FontAwesome, sans-serif;
-      }
-
-      &.likes:before {
-        content: '\f004';
-      }
-
-      &.likes.liked:before {
-        content: '\f004';
-      }
-
-      &.views:before {
-        content: '\f06e';
-      }
-    }
-  }
-}
-
-.disabled{
+.disabled {
   cursor: default;
   opacity: .5;
 }
@@ -253,14 +192,6 @@ img {
   padding: 100px 0;
 }
 
-header {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  z-index: 10;
-}
-
 .content {
   img {
     display: block;
@@ -269,173 +200,17 @@ header {
   }
 }
 
+//COMPONENTS
+@import "components/header";
 @import "components/player";
-
-.publication {
-  .tags {
-    font-size: 1.5rem;
-    margin: 30px 0;
-
-    .tag {
-      display: inline-block;
-      padding: 0.25em 0.4em;
-      font-size: 75%;
-      line-height: 1;
-      color: #fff;
-      text-align: center;
-      white-space: nowrap;
-      vertical-align: baseline;
-      border-radius: 0.25rem;
-      margin: 0 3px;
-      cursor: pointer;
-      font-weight: 500;
-
-      &.tag-default {
-        background-color: #818a91;
-      }
-
-      &.tag-primary, &:hover {
-        background-color: #0275d8;
-      }
-
-
-    }
-  }
-}
-
-.description {
-
-  .likes, .views {
-    user-select: none;
-
-    &:before {
-      display: inline-block;
-      font-size: 18px;
-      font-family: FontAwesome, sans-serif;
-      margin-right: 10px;
-    }
-
-  }
-
-  .views {
-    margin-right: 20px;
-
-    &:before {
-      content: '\f06e';
-    }
-  }
-
-  .likes {
-    cursor: pointer;
-
-    &:before {
-      content: '\f004';
-    }
-  }
-}
-
-.search-form-group {
-  position: relative;
-
-  .search-options {
-    position: absolute;
-    left: 0;
-    top: calc(100% + 10px);
-    background-color: rgba(238, 238, 238, 0.95);
-    border-radius: 10px;
-    overflow: hidden;
-
-    .inner {
-      padding: 15px 10px;
-
-      .option {
-        padding: 5px;
-        font-size: 16px;
-        cursor: pointer;
-
-        &:not(:last-child) {
-          border-bottom: 1px solid #b5b5b5;
-        }
-      }
-    }
-  }
-}
-
-.navbar-brand.pointer {
-  position: relative;
-  z-index: 5;
-}
-
-#navbarNavAltMarkup {
-  justify-content: space-between;
-
-  .search-form-group {
-    width: 300px;
-    margin: 0;
-  }
-}
-
-#public-content {
-  iframe {
-    margin: 30px auto;
-  }
-}
-
-#lift {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 50px;
-  height: 100%;
-  transition: background-color, opacity .2s ease-in-out;
-  opacity: 0;
-
-  &.visible {
-    opacity: 1;
-    cursor: pointer;
-  }
-
-  &:hover {
-    background-color: rgba(0, 0, 0, .5);
-
-    &:before {
-      color: #FFF;
-    }
-  }
-
-  &:before {
-    transition: color .2s ease-in-out;
-    display: block;
-    width: 100%;
-    content: '\f062';
-    color: #000;
-    font-family: FontAwesome, sans-serif;
-    font-size: 18px;
-    position: absolute;
-    left: 0;
-    bottom: 30px;
-    text-align: center;
-  }
-}
-
-.publication .content img {
-  cursor: pointer;
-}
-
-#auth {
-  font-size: 18px;
-  margin-right: 10px;
-  cursor: pointer;
-  position: relative;
-  line-height: 1;
-
-  &:before {
-    font-family: FontAwesome, sans-serif;
-    content: "\f2be";
-  }
-}
-
+@import "components/publication";
+@import "components/lift";
+@import "components/sidebar";
 @import "components/modal";
 @import "components/publications-nav";
 @import "components/comments";
 @import "components/login";
+
+//MEDIA-QUERIES
+@import "@media/tablet";
+@import "@media/mobile";

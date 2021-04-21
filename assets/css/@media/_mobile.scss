@@ -1,0 +1,32 @@
+@media screen and (max-width: 599px) {
+
+  .articles {
+    grid-template-columns: 1fr;
+  }
+
+  .publication-nav {
+    display: none;
+  }
+
+  h1 {
+    font-size: 2.3rem;
+  }
+
+  .publication {
+    .tags {
+      .tag {
+        font-size: 62%;
+      }
+    }
+  }
+
+  #player{
+    width: 100%;
+    z-index: 11;
+  }
+
+  #lift:before{
+    bottom: 75px;
+  }
+
+}

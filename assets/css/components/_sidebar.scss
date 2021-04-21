@@ -1,0 +1,61 @@
+aside {
+  grid-area: sidebar;
+  width: 300px;
+  box-sizing: border-box;
+  padding: 0 10px;
+
+  .search-form {
+    display: none;
+  }
+
+  .aside-inner {
+    &.fixed {
+      position: fixed;
+      @include noscroll;
+      height: calc(100vh - 100px);
+      bottom: 0;
+      overflow: auto;
+    }
+  }
+
+
+  h3 {
+    margin: 0 auto 30px;
+    text-align: center;
+    font-size: 20px;
+  }
+
+  .popular-item {
+    cursor: pointer;
+    padding-bottom: 30px;
+
+    img {
+      margin-bottom: 15px;
+    }
+
+    h4 {
+      font-size: 18px;
+    }
+
+    .fa-icon {
+      &:before {
+        margin-left: 15px;
+        display: inline-block;
+        font-size: 14px;
+        font-family: FontAwesome, sans-serif;
+      }
+
+      &.likes:before {
+        content: '\f004';
+      }
+
+      &.likes.liked:before {
+        content: '\f004';
+      }
+
+      &.views:before {
+        content: '\f06e';
+      }
+    }
+  }
+}

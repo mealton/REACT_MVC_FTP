@@ -8,9 +8,11 @@ window.onscroll = e => {
     const left = sidebar.offsetLeft;
     const width = sidebar.offsetWidth;
 
-    sidebar.classList.add('fixed');
-    sidebar.style.left = left + 'px';
-    sidebar.style.width = width + 'px';
+    if(screen.width > 999){
+        sidebar.classList.add('fixed');
+        sidebar.style.left = left + 'px';
+        sidebar.style.width = width + 'px';
+    }
 
     if (window.pageYOffset > 800)
         lift.classList.add('visible');

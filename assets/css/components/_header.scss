@@ -1,0 +1,63 @@
+header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+
+.search-form-group {
+  position: relative;
+
+  .search-options {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 10px);
+    background-color: rgba(238, 238, 238, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+
+    .inner {
+      padding: 15px 10px;
+
+      .option {
+        padding: 5px;
+        font-size: 16px;
+        cursor: pointer;
+
+        &:not(:last-child) {
+          border-bottom: 1px solid #b5b5b5;
+        }
+      }
+    }
+  }
+}
+
+.navbar-brand.pointer {
+  position: relative;
+  z-index: 5;
+}
+
+#auth {
+  font-size: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+  position: relative;
+  line-height: 1;
+
+  &:before {
+    font-family: FontAwesome, sans-serif;
+    content: "\f2be";
+  }
+}
+
+
+#navbarNavAltMarkup {
+  justify-content: space-between;
+
+  .search-form-group {
+    width: 300px;
+    margin: 0;
+  }
+}

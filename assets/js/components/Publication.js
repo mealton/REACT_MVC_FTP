@@ -29,15 +29,13 @@ const PublicationsNav = props => {
 const Publication = props => {
 
     let className;
-
-    if(sessionStorage.getItem('auth')){
+    if (sessionStorage.getItem('auth')) {
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
         const statistics = JSON.parse(userInfo.statistic);
-        const statisticsLikes = Object.values(statistics.publications.likes).map( id => +id );
-        console.log(statisticsLikes);
+        const statisticsLikes = Object.values(statistics.publications.likes).map(id => +id);
         const isLiked = statisticsLikes.includes(+props.publication.id);
         className = isLiked ? 'fa fa-heart' : 'fa fa-heart-o';
-    }else
+    } else
         className = 'fa fa-heart-o disabled';
 
     return (
@@ -55,11 +53,13 @@ const Publication = props => {
                     <div className="flex-item">
                         <span className="views">{props.publication.views}</span>
                         <span onClick={publication.like}
-                              className="pointer"
+                              className="pointer likes-area"
                               data-id={props.publication.id}>
                             <i className={className} aria-hidden="true"/>
                             &nbsp;
-                            {props.publication.likes}
+                            <span className="likes-count">
+                                {props.publication.likes}
+                            </span>
                         </span>
                     </div>
                 </div>
@@ -116,6 +116,7 @@ const publication = {
     show(e) {
 
         const id = e.currentTarget.getAttribute('data-id');
+        Swipe.hideSidebar();
 
         if (publication.id === id)
             return false;
@@ -126,12 +127,20 @@ const publication = {
             id: id,
             method: 'views'
         };
+
+        const toComments = e.target.classList.contains('comments-count');
+
         const callback = response => {
             Data.publications[id].views = response.data[0].views;
 
             main.render();
+            if (toComments) {
+                setTimeout(() => {
+                    window.scrollTo({top: document.querySelector('.comments-inner').offsetTop, behavior: 'smooth'});
+                }, 500);
+            } else
+                window.scrollTo({top: 0, behavior: 'smooth'});
 
-            window.scrollTo({top: 0, behavior: 'smooth'});
             const publication = Data.publications[id];
             const title = publication.short_title;
             const add = 'publication' + '/' + publication.id + '/' + translit(title);
@@ -146,15 +155,19 @@ const publication = {
     like(e) {
         if (!sessionStorage.getItem('auth'))
             return false;
+
+        const likesCount = document.querySelector('.likes-count');
+        likesCount.className = 'likes-count';
+
         const data = {
             id: e.currentTarget.getAttribute('data-id'),
             method: 'like'
         };
         const callback = response => {
             console.log(response);
-            Data.publications[data.id].likes = response.data[0].likes;
             localStorage.setItem('userInfo', JSON.stringify(response.userInfo[0]));
             Data.users[response.user_id] = response.userInfo;
+            Data.publications[data.id].likes = response.data[0].likes;
             main.render();
         };
         fetchfunc('http://react.mealton.ru/assets/php/React.php', callback, data);
@@ -182,7 +195,7 @@ const publication = {
             modal.style.display = 'none';
     },
 
-    getImageCounter(src){
+    getImageCounter(src) {
         const publicationImages = document.querySelectorAll('.publication .content img');
         const publicationImagesSrc = getElemetsAttributes(publicationImages, 'src')['src'];
         const currentImagePosition = publicationImagesSrc.indexOf(src);

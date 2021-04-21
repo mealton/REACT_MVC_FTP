@@ -41,6 +41,28 @@
     padding: 10px 0;
     box-sizing: border-box;
     font-size: 15px;
+    border-bottom: 1px solid #ededed;
+
+    .profile-img {
+      border-radius: 100%;
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      margin-right: 5px;
+      line-height: 1;
+    }
+
+    .profile-img-default {
+      display: inline-block;
+      margin-right: 5px;
+      line-height: 1;
+      font-size: 18px;
+
+      &:before {
+        font-family: FontAwesome, sans-serif;
+        content: "\f2be";
+      }
+    }
 
     .comment-images {
       margin-bottom: 10px;

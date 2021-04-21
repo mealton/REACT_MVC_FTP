@@ -1,16 +1,20 @@
 const Sidebar = props => publication.id ?
     (<aside>
-        <div className="aside-inner">
-            <Search/>
-            <h3>Похожие:</h3>
-            {sideBar.sideBar(sideBar.getSimilar(publication.id))}
+        <div>
+            <div className="aside-inner">
+                <Search/>
+                <h3>Похожие:</h3>
+                {sideBar.sideBar(sideBar.getSimilar(publication.id))}
+            </div>
         </div>
     </aside>) :
     (<aside>
-        <div className="aside-inner">
-            <Search/>
-            <h3>Популярно:</h3>
-            {sideBar.sideBar(props.popular)}
+        <div>
+            <div className="aside-inner">
+                <Search/>
+                <h3>Популярно:</h3>
+                {sideBar.sideBar(props.popular)}
+            </div>
         </div>
     </aside>);
 

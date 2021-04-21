@@ -51,7 +51,8 @@ class React extends Fetch
         $comments = database::getInstance()->Select(
             'SELECT 
                         `c`.*, 
-                        `u`.`username` as `username` 
+                        `u`.`username` as `username`, 
+                        `u`.`profile_image` as `profile_image` 
                     FROM `comments` as `c`
                         LEFT JOIN `users` as `u`
                         ON `u`.`id` = `c`.`user_id`
