@@ -1,5 +1,8 @@
 const Nav = props => (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <span id="auth" onClick={loginForm.show}>
+            {sessionStorage.getItem('auth') ? <Logout/> : <Login/>}
+        </span>
         <a className="navbar-brand pointer" onClick={nav.toIndex}>Главная</a>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">

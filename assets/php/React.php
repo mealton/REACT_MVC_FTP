@@ -48,11 +48,24 @@ class React extends Fetch
         $music = $this->getter('music', array('status' => 1, 'user_id' => 1));
         $music_albums = array_keys(extract_fetch_array($music, 'album'));
         $hashtags = $this->getter('hashtags');
-        $comments = database::getInstance()->Select('SELECT * FROM `comments` WHERE `status` = 1 ORDER BY `date` DESC');
+        $comments = database::getInstance()->Select(
+            'SELECT 
+                        `c`.*, 
+                        `u`.`username` as `username` 
+                    FROM `comments` as `c`
+                        LEFT JOIN `users` as `u`
+                        ON `u`.`id` = `c`.`user_id`
+                    WHERE 
+                        `c`.`status` = 1 AND 
+                        `c`.`comment` != ""
+                    ORDER BY `c`.`date` DESC'
+        );
         $comments = extract_fetch_array($comments, 'post_id');
         $tags = extract_fetch_array($hashtags, 'public_id');
         $tagsPublics = extract_fetch_array($hashtags, 'hashtag');
         $id_hashtags = id_array($hashtags);
+
+        $users = extract_fetch_array($this->getter('users'));
 
         $sql = 'SELECT 
                     `id`, 
@@ -112,7 +125,8 @@ class React extends Fetch
             'popular' => $popular,
             'tags' => $tags,
             'tagsPublics' => $tagsPublics,
-            'id_hashtags' => $id_hashtags
+            'id_hashtags' => $id_hashtags,
+            'users' => $users
         );
     }
 
@@ -132,10 +146,32 @@ class React extends Fetch
 
     protected function like($data)
     {
-        $sql = 'UPDATE `publications` SET `likes` = `likes` + 1 WHERE `id` = ' . $data['id'];
+        session_start();
+        $user_id = $_SESSION['auth']['id'];
+        $statistics = $_SESSION['auth']['statistic'] ? $_SESSION['auth']['statistic'] : '{}';
+        $statistics = json_decode($statistics, 1);
+        $statisticsLikes = $statistics['publications']['likes'];
+
+        if(!in_array($data['id'], $statisticsLikes)){
+            $sql = 'UPDATE `publications` SET `likes` = `likes` + 1 WHERE `id` = ' . $data['id'];
+            $statistics['publications']['likes'][] = $data['id'];
+        }else{
+            $sql = 'UPDATE `publications` SET `likes` = `likes` - 1 WHERE `id` = ' . $data['id'];
+            $index = array_search($data['id'], $statisticsLikes);
+            if($index)
+                unset($statistics['publications']['likes'][$index]);
+        }
+
+        $result = database::getInstance()->Query($sql);
+        $_SESSION['auth']['statistic'] = json_encode($statistics);
+
+        if($result)
+            $result = database::getInstance()->Query("UPDATE `users` SET `statistic` = '" . $_SESSION['auth']['statistic'] . "' WHERE `id` = " . $user_id);
+
         json(array(
-            'result' => database::getInstance()->Query($sql),
-            'data' => $this->getter('publications', array('id' => $data['id']), 'likes')
+            'result' => $result,
+            'data' => $this->getter('publications', array('id' => $data['id']), 'likes'),
+            'userInfo' => $this->getter('users', array('id' => $user_id))
         ));
     }
 
@@ -155,6 +191,30 @@ class React extends Fetch
         json(array(
             'result' => $id,
             'data' => $this->getter('comments', array('id' => $id))
+        ));
+    }
+
+
+    protected function login($data)
+    {
+        session_start();
+        $username = trim($data['username']);
+        $password = $data['cookie-auth'] ? $data['password'] : md5($data['password']);
+        $user = $this->getter('users', array('username' => $username, 'password' => $password));
+        if (!empty($user))
+            $_SESSION['auth'] = $user[0];
+        json(array(
+            'result' => !empty($user),
+            'userData' => $_SESSION['auth']
+        ));
+    }
+
+    protected function logout($data)
+    {
+        session_start();
+        unset($_SESSION['auth']);
+        json(array(
+            'result' => !isset($_SESSION['auth'])
         ));
     }
 }

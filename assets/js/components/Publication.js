@@ -26,65 +26,88 @@ const PublicationsNav = props => {
 };
 
 
-const Publication = props => (
-    <div className="publication">
-        <h1><b>{props.publication.short_title}</b></h1>
-        <PublicationsNav id={props.publication.id}/>
-        <div className="description">
-            <div className="tags">
-                <Tags tags={props.publication.tags}/>
-            </div>
-            <div className="flex">
-                <div className="flex-item"><small><b>{convert_time(props.publication.created_on, 1)}</b></small></div>
-                <div className="flex-item">
-                    <span className="views">{props.publication.views}</span>
-                    <span className="likes" onClick={publication.like}
-                          data-id={props.publication.id}>{props.publication.likes}</span>
+const Publication = props => {
+
+    let className;
+
+    if(sessionStorage.getItem('auth')){
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const statistics = JSON.parse(userInfo.statistic);
+        const statisticsLikes = Object.values(statistics.publications.likes).map( id => +id );
+        console.log(statisticsLikes);
+        const isLiked = statisticsLikes.includes(+props.publication.id);
+        className = isLiked ? 'fa fa-heart' : 'fa fa-heart-o';
+    }else
+        className = 'fa fa-heart-o disabled';
+
+    return (
+        <div className="publication">
+            <h1><b>{props.publication.short_title}</b></h1>
+            <PublicationsNav id={props.publication.id}/>
+            <div className="description">
+                <div className="tags">
+                    <Tags tags={props.publication.tags}/>
                 </div>
+                <div className="flex">
+                    <div className="flex-item">
+                        <small><b>{convert_time(props.publication.created_on, 1)}</b></small>
+                    </div>
+                    <div className="flex-item">
+                        <span className="views">{props.publication.views}</span>
+                        <span onClick={publication.like}
+                              className="pointer"
+                              data-id={props.publication.id}>
+                            <i className={className} aria-hidden="true"/>
+                            &nbsp;
+                            {props.publication.likes}
+                        </span>
+                    </div>
+                </div>
+                {props.publication.imported ?
+                    (<div>
+                        <br/>
+                        <small>
+                            <b>Источник: </b>
+                            <a href={props.publication.imported} target="_blank">
+                                {new URL(props.publication.imported).hostname}
+                            </a>
+                        </small>
+                    </div>) : false}
+                <hr/>
+                <p><b>Автор:</b> {Data.users[props.publication.user_id][0].username}</p>
+                <p>{props.publication.description}</p>
             </div>
-            {props.publication.imported ?
-                (<div>
-                    <br/>
-                    <small>
-                        <b>Источник: </b>
-                        <a href={props.publication.imported} target="_blank">
-                            {new URL(props.publication.imported).hostname}
-                        </a>
-                    </small>
-                </div>) : false}
-            <hr/>
-            <p>{props.publication.description}</p>
+            <div className="content" id="public-content">
+                {props.publication.content.map(row => {
+                    switch (row.tag_category) {
+                        case('image'):
+                            return <img key={row.id} src={row.content} alt="" onClick={publication.showModalImg}/>;
+                        case ('text'):
+                            return <p key={row.id}>{row.content}</p>;
+                        case ('subtitle'):
+                            return <h2 key={row.id}>{row.content}</h2>;
+                        case ('description'):
+                            return <h6 key={row.id}><i>{row.content}</i></h6>;
+                        case ('video'):
+                            const videoArr = row.content.split('/');
+                            const videoId = videoArr[videoArr.length - 1];
+                            const width = 640;
+                            const heigth = width / 1280 * 720;
+                            return (<iframe src={'http://www.youtube.com/embed/' + videoId}
+                                            key={row.id}
+                                            frameBorder="0"
+                                            width={width}
+                                            height={heigth}
+                                            title="YouTube video player"
+                                            allow="fullscreen"
+                            />)
+                    }
+                })}
+            </div>
+            <Comments data={props.publication.comments} id={props.publication.id}/>
         </div>
-        <div className="content" id="public-content">
-            {props.publication.content.map(row => {
-                switch (row.tag_category) {
-                    case('image'):
-                        return <img key={row.id} src={row.content} alt="" onClick={publication.showModalImg}/>;
-                    case ('text'):
-                        return <p key={row.id}>{row.content}</p>;
-                    case ('subtitle'):
-                        return <h2 key={row.id}>{row.content}</h2>;
-                    case ('description'):
-                        return <h6 key={row.id}><i>{row.content}</i></h6>;
-                    case ('video'):
-                        const videoArr = row.content.split('/');
-                        const videoId = videoArr[videoArr.length - 1];
-                        const width = 640;
-                        const heigth = width / 1280 * 720;
-                        return (<iframe src={'http://www.youtube.com/embed/' + videoId}
-                                        key={row.id}
-                                        frameBorder="0"
-                                        width={width}
-                                        height={heigth}
-                                        title="YouTube video player"
-                                        allow="fullscreen"
-                        />)
-                }
-            })}
-        </div>
-        <Comments data={props.publication.comments} id={props.publication.id}/>
-    </div>
-);
+    )
+};
 
 const publication = {
 
@@ -121,12 +144,17 @@ const publication = {
 
 
     like(e) {
+        if (!sessionStorage.getItem('auth'))
+            return false;
         const data = {
             id: e.currentTarget.getAttribute('data-id'),
             method: 'like'
         };
         const callback = response => {
+            console.log(response);
             Data.publications[data.id].likes = response.data[0].likes;
+            localStorage.setItem('userInfo', JSON.stringify(response.userInfo[0]));
+            Data.users[response.user_id] = response.userInfo;
             main.render();
         };
         fetchfunc('http://react.mealton.ru/assets/php/React.php', callback, data);
@@ -139,8 +167,10 @@ const publication = {
         const publicationImagesSrc = getElemetsAttributes(publicationImages, 'src')['src'];
         const currentImagePosition = publicationImagesSrc.indexOf(img.src);
         const nextSrc = publicationImagesSrc[(prev ? currentImagePosition - 1 : currentImagePosition + 1)];
+        const imagePosition = document.getElementById('image-position');
         if (nextSrc) {
             img.src = nextSrc;
+            imagePosition.innerHTML = publication.getImageCounter(nextSrc);
             document.querySelector('#open-img-link').href = nextSrc;
             document
                 .querySelector(`.publication img[src="${srcClear(nextSrc)}"]`)
@@ -150,6 +180,13 @@ const publication = {
                 });
         } else
             modal.style.display = 'none';
+    },
+
+    getImageCounter(src){
+        const publicationImages = document.querySelectorAll('.publication .content img');
+        const publicationImagesSrc = getElemetsAttributes(publicationImages, 'src')['src'];
+        const currentImagePosition = publicationImagesSrc.indexOf(src);
+        return `${(currentImagePosition + 1)} / ${publicationImagesSrc.length}`;
     },
 
     showModalImg(e) {
@@ -162,12 +199,15 @@ const publication = {
             .innerHTML =
             `<div class="publication-modal-inner">
                 <span id="close-modal" onclick="modal.style.display = 'none';"></span>
-                <img src="${src}" class="modal-img" onclick="publication.modalImgClick(this)" alt="#"/>
                 <div class="controls modal-img-controls">
                     <div class="control-left" onclick="publication.modalImgClick(this, 1)"></div>
                     <div class="control-right" onclick="publication.modalImgClick(this)"></div>
                 </div>
-                <p class="open-img"><a href="${src}" target="_blank" id="open-img-link">Открыть в новом окне</a></p>
+                <h6><b id="image-position">${publication.getImageCounter(src)}</b></h6> 
+                <div>                     
+                    <img src="${src}" class="modal-img" onclick="publication.modalImgClick(this)" alt="#"/>
+                    <p class="open-img"><a href="${src}" target="_blank" id="open-img-link">Открыть в новом окне</a></p>              
+                </div>                                
             </div>`;
         modal.style.display = 'block';
 

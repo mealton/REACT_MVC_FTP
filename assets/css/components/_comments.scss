@@ -8,7 +8,32 @@
     }
   }
 
-  h4{
+  #comment-form {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .profile {
+      width: 80px;
+
+      img {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 5px;
+      }
+
+      h5 {
+        font-size: 16px;
+        font-weight: bold;
+      }
+    }
+
+    .inputs {
+      width: calc(100% - 80px)
+    }
+  }
+
+  h4 {
     margin-bottom: 30px;
   }
 
@@ -17,7 +42,7 @@
     box-sizing: border-box;
     font-size: 15px;
 
-    .comment-images{
+    .comment-images {
       margin-bottom: 10px;
     }
 

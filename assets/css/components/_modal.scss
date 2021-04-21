@@ -59,6 +59,7 @@
       position: relative;
       z-index: 10;
       cursor: pointer;
+      margin: auto;
     }
 
     .controls {
@@ -128,5 +129,13 @@
       position: relative;
       z-index: 10;
     }
+  }
+  
+  #image-position{
+    line-height: 1;
+    color: #FFF;
+    position: fixed;
+    left: 30px;
+    top: 30px;
   }
 }

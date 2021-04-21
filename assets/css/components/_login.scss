@@ -1,0 +1,58 @@
+form.auth {
+  position: absolute;
+  width: 200px;
+  padding: 10px;
+  left: -5px;
+  top: 120%;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+
+  display: none;
+
+  &.visible {
+    display: block;
+  }
+
+  &:before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    transform: rotate(45deg);
+    background-color: #fff;
+    position: absolute;
+    left: 8px;
+    top: -5px;
+    border: 1px solid #e0e0e0;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  input {
+    font-size: 13px;
+  }
+
+  button {
+    font-size: 14px;
+    font-weight: bold;
+    width: 100%;
+  }
+}
+
+.logout {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #f8f9fa;
+}
+
+#profile_image {
+  border-radius: 100%;
+  width: 18px;
+  height: 18px;
+}
