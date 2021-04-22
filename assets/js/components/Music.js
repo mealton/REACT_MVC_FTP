@@ -139,6 +139,9 @@ const music = {
     },
 
     onPlay() {
+
+        ym(76319608,'reachGoal','music');
+
         music.playInterval = setInterval(() => {
             const audio = document.getElementById('audio');
             const timePosition = document.getElementById('time-position');

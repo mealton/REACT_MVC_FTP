@@ -116,6 +116,8 @@ const publication = {
     show(e) {
 
         const id = e.currentTarget.getAttribute('data-id');
+        const menuCollapse = document.querySelector('.collapse');
+        menuCollapse.classList.remove('show');
         Swipe.hideSidebar();
 
         if (publication.id === id)
@@ -165,6 +167,7 @@ const publication = {
         };
         const callback = response => {
             console.log(response);
+            ym(76319608,'reachGoal','like');
             localStorage.setItem('userInfo', JSON.stringify(response.userInfo[0]));
             Data.users[response.user_id] = response.userInfo;
             Data.publications[data.id].likes = response.data[0].likes;
@@ -203,6 +206,10 @@ const publication = {
     },
 
     showModalImg(e) {
+
+        if(screen.width < 1000)
+            return false;
+
         const img = e.target;
         const src = img.src;
         const modal = document.querySelector('.modal');

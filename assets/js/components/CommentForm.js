@@ -32,6 +32,7 @@ const comment = {
         data.method = 'addComment';
         const callback = response => {
             console.log(response);
+            ym(76319608,'reachGoal','comment');
             Data.publications[data.post_id].comments.unshift(response.data[0]);
             main.render();
             const newComment = document.querySelector('.comment-item');

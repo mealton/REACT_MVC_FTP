@@ -21,6 +21,8 @@ const search = {
     showResult(e){
         e.preventDefault();
         const value = e.currentTarget.elements.search.value;
+        const menuCollapse = document.querySelector('.collapse');
+        menuCollapse.classList.remove('show');
         publication.id = false;
         main.render(search.result);
         window.scrollTo({top: 0, behavior: 'smooth'});

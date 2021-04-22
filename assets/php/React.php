@@ -118,7 +118,7 @@ class React extends Fetch
         }
 
 
-        return array(
+        $result = array(
             'publications' => $publications,
             'rubrics' => id_array($rubrics),
             'music' => array_reverse($music),
@@ -129,6 +129,59 @@ class React extends Fetch
             'id_hashtags' => $id_hashtags,
             'users' => $users
         );
+
+        /*$this->sitemapGenerator(array(
+           'publications' =>  $publications,
+           'rubrics' =>  $rubrics,
+           'tags' =>  $id_hashtags
+        ));*/
+
+        return $result;
+    }
+
+    private function sitemapGenerator($data)
+    {
+
+        $site_url = 'http' . ($_SERVER['HTTPS'] ? 's' : '') . '://' . $_SERVER['HTTP_HOST'];
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+		<url>
+            <loc>' . $site_url . '</loc>
+            <priority>1.0</priority>
+        </url>';
+
+        foreach ($data['publications'] as $row){
+            $xml .=
+                '<url>
+                    <loc>' . $site_url . '/publication/' . $row['id'] . '/' . translit($row['short_title']) . '.html</loc>
+                    <lastmod>' . date('Y-m-d\TH:i:s') . '</lastmod>
+                    <priority>1.0</priority>
+                </url>';
+        }
+
+        foreach ($data['rubrics'] as $row){
+            $xml .=
+                '<url>
+                    <loc>' . $site_url . '/category/' . $row['id'] . '/' . translit($row['rubric_name']) . '.html</loc>
+                    <lastmod>' . date('Y-m-d\TH:i:s') . '</lastmod>
+                    <priority>1.0</priority>
+                </url>';
+        }
+
+        foreach ($data['tags'] as $row){
+            $xml .=
+                '<url>
+                    <loc>' . $site_url . '/hashtags/' . $row['id'] . '/' . translit($row['hashtag']) . '.html</loc>
+                    <lastmod>' . date('Y-m-d\TH:i:s') . '</lastmod>
+                    <priority>1.0</priority>
+                </url>';
+        }
+
+        $xml .= '</urlset>';
+
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/sitemap.xml', $xml);
+
     }
 
 
@@ -153,20 +206,20 @@ class React extends Fetch
         $statistics = json_decode($statistics, 1);
         $statisticsLikes = $statistics['publications']['likes'];
 
-        if(!in_array($data['id'], $statisticsLikes)){
+        if (!in_array($data['id'], $statisticsLikes)) {
             $sql = 'UPDATE `publications` SET `likes` = `likes` + 1 WHERE `id` = ' . $data['id'];
             $statistics['publications']['likes'][] = $data['id'];
-        }else{
+        } else {
             $sql = 'UPDATE `publications` SET `likes` = `likes` - 1 WHERE `id` = ' . $data['id'];
             $index = array_search($data['id'], $statisticsLikes);
-            if($index)
+            if ($index)
                 unset($statistics['publications']['likes'][$index]);
         }
 
         $result = database::getInstance()->Query($sql);
         $_SESSION['auth']['statistic'] = json_encode($statistics);
 
-        if($result)
+        if ($result)
             $result = database::getInstance()->Query("UPDATE `users` SET `statistic` = '" . $_SESSION['auth']['statistic'] . "' WHERE `id` = " . $user_id);
 
         json(array(

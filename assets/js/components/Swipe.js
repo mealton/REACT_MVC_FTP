@@ -9,12 +9,13 @@ const Swipe = {
     },
     hideSidebar() {
         document.body.classList.remove('overflow-hidden');
-        Swipe.sideBar.classList.remove('visible');
+        if(Swipe.sideBar !== undefined)
+            Swipe.sideBar.classList.remove('visible');
     }
 };
 
 if (screen.width < 1000) {
-    const swipeLimit = 80;
+    const swipeLimit = 150;
     const menuBtn = document.querySelector('.navbar-toggler');
 
 

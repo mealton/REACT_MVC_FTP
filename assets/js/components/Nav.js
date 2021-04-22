@@ -1,29 +1,36 @@
-const Nav = props => (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+const Nav = props => {
+    const path = window.location.pathname.split('/').filter(el => el !== "" && el !== null);
+    return (
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <span id="auth" onClick={loginForm.show}>
             {sessionStorage.getItem('auth') ? <Logout/> : <Login/>}
         </span>
-        <a className="navbar-brand pointer" onClick={nav.toIndex}>Главная</a>
-        <button className="navbar-toggler" onClick={nav.showNav} type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"/>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div className="navbar-nav">
-                {props.nav.map(row => {
-                    if (row.id !== '5')
-                        return <a className="nav-item nav-link pointer" onClick={nav.category}
-                                  data-category={row.id} key={row.id}>{row.rubric_name}</a>
-                })}
+            <a className="navbar-brand pointer" onClick={nav.toIndex}>Главная</a>
+            <button className="navbar-toggler" onClick={nav.showNav} type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span className="navbar-toggler-icon"/>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div className="navbar-nav">
+                    {props.nav.map(row => {
+                        if (row.id !== '5')
+                            return <a className={
+                                'nav-item nav-link ' +
+                                (path[0] === 'category' && path[1] === row.id ? ' active' : ' pointer')}
+                                      onClick={nav.category}
+                                      data-category={row.id} key={row.id}>{row.rubric_name}</a>
+                    })}
+                </div>
+                <Search/>
             </div>
-            <Search/>
-        </div>
-    </nav>
-);
+        </nav>
+    )};
 
 
 const nav = {
         toIndex(e) {
+            const menuCollapse = document.querySelector('.collapse');
+            menuCollapse.classList.remove('show');
             publication.id = false;
             historyFunc();
             document.title = 'Все публикации';
@@ -32,6 +39,8 @@ const nav = {
         },
 
         category(e) {
+            const menuCollapse = document.querySelector('.collapse');
+            menuCollapse.classList.remove('show');
             const categoryId = e.currentTarget.getAttribute('data-category');
             const category = e.currentTarget.innerText;
             const data = {};

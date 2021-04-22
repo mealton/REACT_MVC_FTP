@@ -1,0 +1,13 @@
+User-agent: *
+Disallow:
+Host: http://react.mealton.ru
+Crawl-delay: 120
+Sitemap: http://react.mealton.ru/site_map.xml
+User-agent: Aport
+Disallow: /
+User-agent: msnbot
+Disallow: /
+User-agent: psbot
+Disallow: /
+User-agent: yahoo-slurp
+Disallow: /

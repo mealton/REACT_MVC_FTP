@@ -20,12 +20,37 @@
     }
   }
 
-  #player{
+  .comments {
+    #comment-form {
+      .profile {
+        width: 40px;
+
+        img {
+          width: 30px;
+          height: 30px;
+        }
+
+        h5 {
+          display: none;
+        }
+      }
+
+      .inputs {
+        width: calc(100% - 40px);
+
+        textarea {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  #player {
     width: 100%;
     z-index: 11;
   }
 
-  #lift:before{
+  #lift:before {
     bottom: 75px;
   }
 

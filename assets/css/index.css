@@ -331,26 +331,28 @@ header {
       font-size: 10px;
       line-height: 1; }
 
-.publication .tags {
-  font-size: 1.5rem;
-  margin: 30px 0; }
-  .publication .tags .tag {
-    display: inline-block;
-    padding: 0.25em 0.4em;
-    font-size: 75%;
-    line-height: 1;
-    color: #fff;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: 0.25rem;
-    margin: 0 3px;
-    cursor: pointer;
-    font-weight: 500; }
-    .publication .tags .tag.tag-default {
-      background-color: #818a91; }
-    .publication .tags .tag.tag-primary, .publication .tags .tag:hover {
-      background-color: #0275d8; }
+.publication {
+  overflow: hidden; }
+  .publication .tags {
+    font-size: 1.5rem;
+    margin: 30px 0; }
+    .publication .tags .tag {
+      display: inline-block;
+      padding: 0.25em 0.4em;
+      font-size: 75%;
+      line-height: 1;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.25rem;
+      margin: 0 3px;
+      cursor: pointer;
+      font-weight: 500; }
+      .publication .tags .tag.tag-default {
+        background-color: #818a91; }
+      .publication .tags .tag.tag-primary, .publication .tags .tag:hover {
+        background-color: #0275d8; }
 
 .description .likes, .description .views {
   user-select: none; }
@@ -726,6 +728,19 @@ form.auth {
      position: relative;
      z-index: 5;
    }*/
+  .comments #comment-form .profile {
+    width: 50px; }
+    .comments #comment-form .profile img {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 3px; }
+    .comments #comment-form .profile h5 {
+      font-size: 14px; }
+  .comments #comment-form .inputs {
+    width: calc(100% - 60px); }
+    .comments #comment-form .inputs textarea {
+      font-size: 15px; }
+
   .modal #modal-inner {
     width: 80%; }
   .modal .publication-modal-inner .controls > div:before {
@@ -745,6 +760,18 @@ form.auth {
 
   .publication .tags .tag {
     font-size: 62%; }
+
+  .comments #comment-form .profile {
+    width: 40px; }
+    .comments #comment-form .profile img {
+      width: 30px;
+      height: 30px; }
+    .comments #comment-form .profile h5 {
+      display: none; }
+  .comments #comment-form .inputs {
+    width: calc(100% - 40px); }
+    .comments #comment-form .inputs textarea {
+      font-size: 14px; }
 
   #player {
     width: 100%;
