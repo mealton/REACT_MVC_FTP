@@ -4,7 +4,7 @@ const main = {
         ReactDOM.render(
             <div className='main-div'>
                 <Header rubrics={Object.values(Data.rubrics)}/>
-                <div className="container">
+                <div className="container-fluid">
                     <main>
                         <Sidebar popular={Data.popular}/>
                         <Content data={data}/>
@@ -13,18 +13,63 @@ const main = {
                 </div>
                 <Lift/>
                 <Modal/>
+                <Messenger/>
             </div>,
             document.getElementById('app')
         );
+
+        setTimeout(main.afterRender, 200);
+    },
+
+    afterRender() {
         if (document.querySelector('.publication iframe') !== null) {
             document.querySelectorAll('.publication iframe').forEach(iframe => {
                 iframe.width = iframe.parentElement.offsetWidth;
                 iframe.height = iframe.width / 1280 * 720;
             })
         }
+
+        //Преобразование строковых тегов в html элементы
+
+        document.querySelectorAll('#public-content p, .message-item p').forEach(
+            item => {
+                const e = document.createElement('span');
+                e.innerHTML = item.innerHTML;
+                item.innerHTML = e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+            });
+
+
+        if (screen.width > 999) {
+            const sidebar = document.querySelector('.aside-inner');
+            const left = sidebar.offsetLeft;
+            const width = sidebar.offsetWidth;
+            sidebar.classList.add('fixed');
+            sidebar.style.left = left + 'px';
+            sidebar.style.width = width + 'px';
+        }
+
+        //Прокруткасообщений вниз
+        if (window.location.search.match(/messenger=1/gi)) {
+            const messagesInner = document.querySelector('.messages-inner');
+            messagesInner.scrollTop = messagesInner.scrollHeight;
+        }
     },
 
     init() {
+
+        //проверка авторизации
+        if (!sessionStorage.getItem('auth') && (Cookie.get('username') && Cookie.get('password'))) {
+            fetchfunc(
+                'http://react.mealton.ru/assets/php/React.php',
+                response => response.result ? sessionStorage.setItem('auth', 1) : false,
+                {
+                    username: Cookie.get('username'),
+                    password: Cookie.get('password'),
+                    method: 'login',
+                    cookie: 1
+                });
+        }
+
         const path = window.location.pathname.split('/').filter(el => el !== "" && el !== null);
         if (path[0] === 'publication' && path[1])
             publication.id = parseInt(path[1]);

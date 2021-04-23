@@ -134,6 +134,8 @@ body {
 
 
 main {
+  max-width: 80%;
+  margin: auto;
   display: grid;
   grid-template-areas: "sidebar content";
   grid-gap: 40px;
@@ -147,7 +149,7 @@ main {
 
 
 .articles {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-gap: 20px;
   grid-auto-rows: max-content;
 }
@@ -210,7 +212,9 @@ img {
 @import "components/publications-nav";
 @import "components/comments";
 @import "components/login";
+@import "components/messenger";
 
 //MEDIA-QUERIES
+@import "@media/laptop";
 @import "@media/tablet";
 @import "@media/mobile";

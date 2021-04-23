@@ -52,6 +52,7 @@
 <div id="app"></div>
 
 <script src="http://react.mealton.ru/assets/js/lib.js"></script>
+<script src="http://react.mealton.ru/assets/js/cookie.js"></script>
 
 
 <script type="text/babel">

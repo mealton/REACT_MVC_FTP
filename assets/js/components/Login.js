@@ -20,12 +20,14 @@ const Logout = () => {
                   onSubmit={loginForm.logout}>
                 <div className="form-group">
                     <p><b>{userInfo.username}</b></p>
+                    <a href="?messenger=1" onClick={messenger.show}><small>Мессенджер</small></a>
+                    <br/>
                 </div>
                 <button type="submit" className="btn btn-primary">Выйти</button>
             </form>
         </div>
     );
-}
+};
 
 
 const loginForm = {

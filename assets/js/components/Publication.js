@@ -76,6 +76,7 @@ const Publication = props => {
                 <hr/>
                 <p><b>Автор:</b> {Data.users[props.publication.user_id][0].username}</p>
                 <p>{props.publication.description}</p>
+                <hr/>
             </div>
             <div className="content" id="public-content">
                 {props.publication.content.map(row => {
@@ -85,7 +86,7 @@ const Publication = props => {
                         case ('text'):
                             return <p key={row.id}>{row.content}</p>;
                         case ('subtitle'):
-                            return <h2 key={row.id}>{row.content}</h2>;
+                            return <h3 key={row.id}>{row.content}</h3>;
                         case ('description'):
                             return <h6 key={row.id}><i>{row.content}</i></h6>;
                         case ('video'):

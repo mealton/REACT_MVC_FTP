@@ -41,6 +41,8 @@ class React extends Fetch
 
     public function getData()
     {
+        session_start();
+
         $publications = $this->getter('publications', array('status' => 1));
         $publications_content = $this->getter('publications_content');
         $publications_content = extract_fetch_array($publications_content, 'publication_id');
@@ -65,6 +67,62 @@ class React extends Fetch
         $tags = extract_fetch_array($hashtags, 'public_id');
         $tagsPublics = extract_fetch_array($hashtags, 'hashtag');
         $id_hashtags = id_array($hashtags);
+
+        $user_id = intval($_SESSION['auth']['id']);
+
+        if($user_id){
+            $sql = 'SELECT 
+                        `to_user`, 
+                        `from_user`,
+                        `username`,
+                        `profile_image`
+                    FROM `messenger`
+                        LEFT JOIN `users` as `u`
+                            ON (`to_user` = `u`.`id` AND `from_user` != `u`.`id`) 
+                            OR (`to_user` != `u`.`id` AND `from_user` = `u`.`id`)
+                    WHERE 
+                        (`to_user` = ' . $user_id . ' OR `from_user` = ' . $user_id . ') AND
+                        `messenger`.`status` = 1';
+            $fetch = database::getInstance()->Select($sql);
+            $messenger_users = array();
+            foreach ($fetch as $row){
+                if($row['to_user'] == $user_id){
+                    $messenger_users[$row['from_user']] = array(
+                        'id' => $row['from_user'],
+                        'username' => $row['username'],
+                        'profile_image' => $row['profile_image']
+                    );
+                }else{
+                    $messenger_users[$row['to_user']] = array(
+                        'id' => $row['to_user'],
+                        'username' => $row['username'],
+                        'profile_image' => $row['profile_image']
+                    );
+                }
+            }
+
+            $sql = 'SELECT * 
+                    FROM `messenger`
+                    WHERE 
+                        (`to_user` = ' . $user_id . ' OR `from_user` = ' . $user_id . ') 
+                        AND `status` = 1';
+            $messages = array();
+            $fetch = database::getInstance()->Select($sql);
+            foreach ($fetch as $row){
+                if($row['to_user'] == $user_id){
+                    if($messages[$row['from_user']])
+                        $messages[$row['from_user']][] = $row;
+                    else
+                        $messages[$row['from_user']] = array($row);
+                }else{
+                    if($messages[$row['to_user']])
+                        $messages[$row['to_user']][] = $row;
+                    else
+                        $messages[$row['to_user']] = array($row);
+                }
+            }
+
+        }
 
         $users = extract_fetch_array($this->getter('users'));
 
@@ -127,7 +185,9 @@ class React extends Fetch
             'tags' => $tags,
             'tagsPublics' => $tagsPublics,
             'id_hashtags' => $id_hashtags,
-            'users' => $users
+            'users' => $users,
+            'messengerUsers' => array_values($messenger_users),
+            'messages' => $messages
         );
 
         /*$this->sitemapGenerator(array(
@@ -253,10 +313,12 @@ class React extends Fetch
     {
         session_start();
         $username = trim($data['username']);
-        $password = $data['cookie-auth'] ? $data['password'] : md5($data['password']);
+        $password = $data['cookie'] ? $data['password'] : md5($data['password']);
         $user = $this->getter('users', array('username' => $username, 'password' => $password));
         if (!empty($user))
             $_SESSION['auth'] = $user[0];
+            setcookie("username", $user[0]['username'], time() + 30 * 24 * 3600, "/");
+            setcookie("password", $user[0]['password'], time() + 30 * 24 * 3600, "/");
         json(array(
             'result' => !empty($user),
             'userData' => $_SESSION['auth']
@@ -270,6 +332,22 @@ class React extends Fetch
         json(array(
             'result' => !isset($_SESSION['auth'])
         ));
+    }
+
+    protected function sendMessage($data)
+    {
+        if(!$data['to_user'] || !$data['from_user']){
+            json(array('result' => 0, 'warning' => 'Ошибка! Не задан отправить, либо получатель собщения!'));
+            return false;
+        }
+
+        $id = $this->insert('messenger', $data);
+        if($id){
+            json(array('result' => 1, 'message' => $this->getter('messenger', array('id' => $id))));
+        }else{
+            json(array('result' => 0, 'warning' => 'Сообщение не отправлено'));
+        }
+        return 1;
     }
 }
 
