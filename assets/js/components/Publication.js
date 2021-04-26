@@ -146,8 +146,10 @@ const publication = {
 
             const publication = Data.publications[id];
             const title = publication.short_title;
+            const description = publication.description;
             const add = 'publication' + '/' + publication.id + '/' + translit(title);
             document.title = title;
+            document.querySelector('meta[name="description"]').setAttribute("content", description);
             historyFunc(add);
         };
         fetchfunc('http://react.mealton.ru/assets/php/React.php', callback, data);

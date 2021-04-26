@@ -54,6 +54,8 @@ const nav = {
             window.scrollTo({top: 0, behavior: 'smooth'});
             const add = 'category' + '/' + categoryId + '/' + translit(category);
             document.title = category;
+            document.querySelector('meta[name="description"]')
+                .setAttribute("content", 'Публикации категории ' + category);
             historyFunc(add);
         },
 

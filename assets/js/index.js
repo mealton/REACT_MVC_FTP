@@ -61,7 +61,12 @@ const main = {
         if (!sessionStorage.getItem('auth') && (Cookie.get('username') && Cookie.get('password'))) {
             fetchfunc(
                 'http://react.mealton.ru/assets/php/React.php',
-                response => response.result ? sessionStorage.setItem('auth', 1) : false,
+                response => {
+                    if (!response.result)
+                        return false;
+                    sessionStorage.setItem('auth', 1);
+                    main.render();
+                },
                 {
                     username: Cookie.get('username'),
                     password: Cookie.get('password'),
