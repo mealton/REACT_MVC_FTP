@@ -3,9 +3,13 @@ form.auth {
   width: 200px;
   padding: 10px;
   left: -5px;
-  top: 120%;
+  top: 130%;
   background-color: #fff;
   border: 1px solid #e0e0e0;
+
+  -webkit-box-shadow: 6px 6px 12px 0 rgba(50, 50, 50, .2);
+  -moz-box-shadow: 6px 6px 12px 0 rgba(50, 50, 50, .2);
+  box-shadow: 6px 6px 12px 0 rgba(50, 50, 50, .2);
 
   display: none;
 
