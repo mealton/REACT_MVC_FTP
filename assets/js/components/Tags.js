@@ -16,7 +16,11 @@ const tags = {
 
         window.scrollTo({top: 0, behavior: 'smooth'});
         const add = 'hashtags' + '/' + id + '/' + translit(tagName);
-        document.title = 'Публикации с меткой #' + tagName;
+        main.title = '#' + tagName;
+
+        if(!main.playerIsOn)
+            document.title = main.title;
+
         historyFunc(add);
     }
 };

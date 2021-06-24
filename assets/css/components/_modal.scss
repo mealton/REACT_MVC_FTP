@@ -10,9 +10,9 @@
   background-color: rgba(0, 0, 0, .75);
   user-select: none;
 
-  #close-modal{
+  #close-modal {
     position: absolute;
-    right: 0;
+    right: -20px;
     top: 0;
     cursor: pointer;
     font-size: 18px;
@@ -20,11 +20,11 @@
     transition: color .5s ease-in-out;
     z-index: 999;
 
-    &:hover{
+    &:hover {
       color: red;
     }
 
-    &:before{
+    &:before {
       font-family: FontAwesome, sans-serif;
       content: '\f00d';
     }
@@ -55,11 +55,11 @@
     flex-direction: column;
     position: relative;
 
-    img{
+    img {
       position: relative;
       z-index: 10;
       cursor: pointer;
-      margin: auto;
+      margin: 0;
     }
 
     .controls {
@@ -115,6 +115,14 @@
     }
   }
 
+  #image-wrapper {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
   .open-img {
     width: 100%;
     font-size: x-small;
@@ -130,8 +138,8 @@
       z-index: 10;
     }
   }
-  
-  #image-position{
+
+  #image-position {
     line-height: 1;
     color: #FFF;
     position: fixed;

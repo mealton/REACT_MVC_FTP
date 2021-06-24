@@ -19,7 +19,7 @@ const Music = props => (
                onEnded={music.playNext}
                onLoadStart={music.loading}
                onLoadedData={music.duration}
-               onPause={clearInterval(music.getRadioTitleInterval)}
+               onPause={music.onPause}
                src={props.music[0].src}
         />
         <div id="music-player">
@@ -39,7 +39,8 @@ const Music = props => (
                 </div>
             </div>
             <div className="time fa-3x">
-                <span className="pointer" onClick={music.timeDesc} id="time-position">00:00</span>/<span id="time-duration"><i className="fas fa-spinner fa-pulse"/></span>
+                <span className="pointer" onClick={music.timeDesc} id="time-position">00:00</span>/<span
+                id="time-duration"><i className="fas fa-spinner fa-pulse"/></span>
             </div>
         </div>
     </div>
@@ -47,7 +48,7 @@ const Music = props => (
 
 const music = {
 
-    setPlaylist(musicList){
+    setPlaylist(musicList) {
         const playList = document.getElementById('play-list');
         const audio = document.getElementById('audio');
         const base = document.querySelector('base').href;
@@ -77,10 +78,10 @@ const music = {
             Data.music :
             Data.music.filter(row => row.album.trim() === select.value.trim());
 
-        if(icon.classList.contains('checked')){
+        if (icon.classList.contains('checked')) {
             icon.classList.remove('checked');
-        }else{
-            musicList =  shuffle(musicList);
+        } else {
+            musicList = shuffle(musicList);
             icon.classList.add('checked')
         }
 
@@ -122,25 +123,34 @@ const music = {
 
         const callback = response => {
             const titleElement = document.getElementById('title');
+            console.log(response.title);
             if (response.title && titleElement.innerHTML !== response.title)
-                titleElement.innerHTML = response.title;
+                document.title = titleElement.innerHTML = response.title;
         };
 
         fetchfunc('http://react.mealton.ru/assets/php/React.php', callback, data);
 
     },
 
-    timeDesc(e){
+    timeDesc(e) {
         const timePosition = document.getElementById('time-position');
-        if(timePosition.classList.contains('desc'))
+        if (timePosition.classList.contains('desc'))
             timePosition.classList.remove('desc');
         else
             timePosition.classList.add('desc')
     },
 
+    onPause(){
+        clearInterval(music.getRadioTitleInterval);
+        document.title = main.title;
+        main.playerIsOn = 0;
+    },
+
     onPlay() {
 
-        ym(76319608,'reachGoal','music');
+        ym(76319608, 'reachGoal', 'music');
+
+        main.playerIsOn = 1;
 
         music.playInterval = setInterval(() => {
             const audio = document.getElementById('audio');
@@ -164,16 +174,19 @@ const music = {
         const item = Data.music.find(row => row.src === srcClear);
         clearInterval(music.getRadioTitleInterval);
 
-        if (parseInt(item.is_radio) === 1)
+        const title = document.getElementById('title');
+
+        if (parseInt(item.is_radio) === 1) {
             music.getRadioTitleInterval = setInterval(() => music.getRadioTitle(item.title), 1000);
-        else {
-            const title = document.getElementById('title');
+        } else {
             const li = document.querySelector('#playlist .active');
 
             if (li !== undefined && title.innerHTML !== li.innerHTML)
                 title.innerHTML = li.innerHTML;
             clearInterval(music.getRadioTitleInterval);
         }
+
+        document.title = title.innerHTML;
 
     },
 

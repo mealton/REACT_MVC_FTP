@@ -189,3 +189,41 @@ function publicationMediaCounter(id) {
             return `(${videoCount} видео)`;
     }
 }
+
+function jrumble(element, duration = 800) {
+    console.log(element);
+    $(element).jrumble({x: 4, y: 0, rotation: 0, speed: 0}).trigger('startRumble');
+    setTimeout(() => $(element).trigger('stopRumble'), duration);
+}
+
+function validate(form, fields = []) {
+
+    const data = formExecute(form);
+    const submitter = form.querySelector('[type="submit"]');
+    const required = [];
+
+    form.querySelectorAll('[data-required]').forEach(input => required.push(input.name));
+
+    fields = fields.length === 0 ? required : fields;
+
+    for (let i in data) {
+        if (!data[i] && fields.indexOf(i) !== -1) {
+            let input = form.querySelector('[name="' + i + '"]');
+
+            input.focus();
+            jrumble(submitter);
+            return false;
+        }
+    }
+
+    return data;
+}
+
+
+setTimeout(() => {
+    document.querySelectorAll('.validate-form [required]').forEach(input => {
+        input.required = false;
+        input.setAttribute('data-required', 1)
+    });
+}, 1000);
+

@@ -33,7 +33,11 @@ const nav = {
             menuCollapse.classList.remove('show');
             publication.id = false;
             historyFunc();
-            document.title = 'Все публикации';
+            main.title = 'Все публикации';
+
+            if(!main.playerIsOn)
+                document.title = main.title;
+
             main.render();
             window.scrollTo({top: 0, behavior: 'smooth'});
         },
@@ -53,7 +57,11 @@ const nav = {
             main.render(data);
             window.scrollTo({top: 0, behavior: 'smooth'});
             const add = 'category' + '/' + categoryId + '/' + translit(category);
-            document.title = category;
+            main.title = category;
+
+            if(!main.playerIsOn)
+                document.title = main.title;
+
             document.querySelector('meta[name="description"]')
                 .setAttribute("content", 'Публикации категории ' + category);
             historyFunc(add);

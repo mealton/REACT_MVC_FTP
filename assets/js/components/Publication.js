@@ -114,7 +114,7 @@ const publication = {
 
     id: false,
 
-    show(e) {
+    show(e){
 
         const id = e.currentTarget.getAttribute('data-id');
         const menuCollapse = document.querySelector('.collapse');
@@ -130,6 +130,8 @@ const publication = {
             id: id,
             method: 'views'
         };
+
+        //main.title = Data.publications[id].short_title;
 
         const toComments = e.target.classList.contains('comments-count');
 
@@ -148,7 +150,11 @@ const publication = {
             const title = publication.short_title;
             const description = publication.description;
             const add = 'publication' + '/' + publication.id + '/' + translit(title);
-            document.title = title;
+            main.title = title;
+
+            if(!main.playerIsOn)
+                document.title = title;
+
             document.querySelector('meta[name="description"]').setAttribute("content", description);
             historyFunc(add);
         };
@@ -170,7 +176,7 @@ const publication = {
         };
         const callback = response => {
             console.log(response);
-            ym(76319608,'reachGoal','like');
+            ym(76319608, 'reachGoal', 'like');
             localStorage.setItem('userInfo', JSON.stringify(response.userInfo[0]));
             Data.users[response.user_id] = response.userInfo;
             Data.publications[data.id].likes = response.data[0].likes;
@@ -210,7 +216,7 @@ const publication = {
 
     showModalImg(e) {
 
-        if(screen.width < 1000)
+        if (screen.width < 1000)
             return false;
 
         const img = e.target;
@@ -226,12 +232,13 @@ const publication = {
                     <div class="control-left" onclick="publication.modalImgClick(this, 1)"></div>
                     <div class="control-right" onclick="publication.modalImgClick(this)"></div>
                 </div>
-                <h6><b id="image-position">${publication.getImageCounter(src)}</b></h6> 
-                <div>                     
+                <h6><b id="image-position">${publication.getImageCounter(src)}</b></h6>                  
+                <div id="image-wrapper">
                     <img src="${src}" class="modal-img" onclick="publication.modalImgClick(this)" alt="#"/>
-                    <p class="open-img"><a href="${src}" target="_blank" id="open-img-link">Открыть в новом окне</a></p>              
-                </div>                                
+                    <p class="open-img"><a href="${src}" target="_blank" id="open-img-link">Открыть в новом окне</a></p>
+                </div>      
             </div>`;
+
         modal.style.display = 'block';
 
         const preventWheel = e => {

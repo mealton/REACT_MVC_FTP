@@ -196,6 +196,8 @@ class React extends Fetch
            'tags' =>  $id_hashtags
         ));*/
 
+        file_put_contents(__DIR__ . '/data.php', json_encode($result));
+
         return $result;
     }
 
@@ -265,13 +267,14 @@ class React extends Fetch
         $statistics = $_SESSION['auth']['statistic'] ? $_SESSION['auth']['statistic'] : '{}';
         $statistics = json_decode($statistics, 1);
         $statisticsLikes = $statistics['publications']['likes'];
+        $id = $data['id'];
 
         if (!in_array($data['id'], $statisticsLikes)) {
-            $sql = 'UPDATE `publications` SET `likes` = `likes` + 1 WHERE `id` = ' . $data['id'];
-            $statistics['publications']['likes'][] = $data['id'];
+            $sql = 'UPDATE `publications` SET `likes` = `likes` + 1 WHERE `id` = ' . $id;
+            $statistics['publications']['likes'][] = $id;
         } else {
-            $sql = 'UPDATE `publications` SET `likes` = `likes` - 1 WHERE `id` = ' . $data['id'];
-            $index = array_search($data['id'], $statisticsLikes);
+            $sql = 'UPDATE `publications` SET `likes` = `likes` - 1 WHERE `id` = ' . $id;
+            $index = array_search($id, $statisticsLikes);
             if ($index)
                 unset($statistics['publications']['likes'][$index]);
         }
@@ -282,30 +285,70 @@ class React extends Fetch
         if ($result)
             $result = database::getInstance()->Query("UPDATE `users` SET `statistic` = '" . $_SESSION['auth']['statistic'] . "' WHERE `id` = " . $user_id);
 
+        $likes = $this->getter('publications', array('id' => $id), 'likes');
+
         json(array(
             'result' => $result,
-            'data' => $this->getter('publications', array('id' => $data['id']), 'likes'),
+            'data' => $likes,
             'userInfo' => $this->getter('users', array('id' => $user_id))
         ));
+
+        $dataJSON = file_get_contents(__DIR__ . '/data.php');
+        $data = json_decode($dataJSON, 1);
+        $data['publications'][$id]['likes'] = $likes[0]['likes'];
+        file_put_contents(__DIR__ . '/data.php', json_encode($data));
     }
 
     protected function views($data)
     {
-        $sql = 'UPDATE `publications` SET `views` = `views` + 1 WHERE `id` = ' . $data['id'];
+        $id = $data['id'];
+        $sql = 'UPDATE `publications` SET `views` = `views` + 1 WHERE `id` = ' . $id;
+        $result = database::getInstance()->Query($sql);
+        $views = $this->getter('publications', array('id' => $id), 'views');
         json(array(
-            'result' => database::getInstance()->Query($sql),
-            'data' => $this->getter('publications', array('id' => $data['id']), 'views')
+            'result' => $result,
+            'data' => $views
         ));
-    }
 
+        $dataJSON = file_get_contents(__DIR__ . '/data.php');
+        $data = json_decode($dataJSON, 1);
+        $data['publications'][$id]['views'] = $views[0]['views'];
+        file_put_contents(__DIR__ . '/data.php', json_encode($data));
+    }
 
     protected function addComment($data)
     {
         $id = $this->insert('comments', $data);
+        $post_id = $data['post_id'];
+
+        $comments = database::getInstance()->Select(
+            'SELECT 
+                        `c`.*, 
+                        `u`.`username` as `username`, 
+                        `u`.`profile_image` as `profile_image` 
+                    FROM `comments` as `c`
+                        LEFT JOIN `users` as `u`
+                        ON `u`.`id` = `c`.`user_id`
+                    WHERE 
+                        `c`.`status` = 1 AND 
+                        `c`.`comment` != "" AND 
+                        `c`.`post_id` = ' . $post_id . '
+                    ORDER BY `c`.`date` DESC'
+        );
+        $comments = extract_fetch_array($comments, 'id');
+
         json(array(
             'result' => $id,
-            'data' => $this->getter('comments', array('id' => $id))
+            'data' => $comments[$id]
         ));
+
+        $dataJSON = file_get_contents(__DIR__ . '/data.php');
+        $data = json_decode($dataJSON, 1);
+        $data['publications'][$post_id]['comments'] = array_map(function ($item){
+            return $item[0];
+        }, array_values($comments)) ;
+        file_put_contents(__DIR__ . '/data.php', json_encode($data));
+
     }
 
 

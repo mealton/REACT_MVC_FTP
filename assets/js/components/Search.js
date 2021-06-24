@@ -36,7 +36,11 @@ const search = {
         main.render(search.result);
         window.scrollTo({top: 0, behavior: 'smooth'});
         const add = '-search/' + value;
-        document.title = 'Поиск публикаций, сожержащих #' + value;
+        main.title = 'Поиск публикаций, сожержащих #' + value;
+
+        if(!main.playerIsOn)
+            document.title = main.title;
+
         historyFunc(add);
         search.reset();
     },

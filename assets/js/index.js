@@ -1,5 +1,9 @@
 const main = {
 
+    title: '',
+
+    playerIsOn: 0,
+
     render(data = Data.publications) {
         ReactDOM.render(
             <div className='main-div'>
@@ -22,6 +26,7 @@ const main = {
     },
 
     afterRender() {
+
         if (document.querySelector('.publication iframe') !== null) {
             document.querySelectorAll('.publication iframe').forEach(iframe => {
                 iframe.width = iframe.parentElement.offsetWidth;

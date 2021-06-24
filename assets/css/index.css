@@ -468,7 +468,7 @@ aside {
     width: 0; }
   .modal #close-modal {
     position: absolute;
-    right: 0;
+    right: -20px;
     top: 0;
     cursor: pointer;
     font-size: 18px;
@@ -504,7 +504,7 @@ aside {
       position: relative;
       z-index: 10;
       cursor: pointer;
-      margin: auto; }
+      margin: 0; }
     .modal .publication-modal-inner .controls {
       position: absolute;
       left: 0;
@@ -539,6 +539,12 @@ aside {
           content: '\f061'; }
         .modal .publication-modal-inner .controls .control-right:hover {
           background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1)); }
+  .modal #image-wrapper {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; }
   .modal .open-img {
     width: 100%;
     font-size: x-small;

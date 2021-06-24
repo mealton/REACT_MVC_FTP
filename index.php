@@ -62,6 +62,9 @@
 
 <div id="app"></div>
 
+<script src="http://react.mealton.ru/assets/vendor/jquery/jquery.min.js"></script>
+<script src="http://react.mealton.ru/assets/vendor/jquery/jquery.jrumble.1.3.min.js"></script>
+
 <script src="http://react.mealton.ru/assets/js/lib.js"></script>
 <script src="http://react.mealton.ru/assets/js/cookie.js"></script>
 
