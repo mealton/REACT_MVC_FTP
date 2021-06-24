@@ -145,8 +145,7 @@ class React extends Fetch
                     `category` != 5
                  ORDER BY 
                     `likes` DESC, 
-                    `views` DESC
-                 LIMIT 30';
+                    `views` DESC';
 
         $popular = database::getInstance()->Select($sql);
 
@@ -196,7 +195,7 @@ class React extends Fetch
            'tags' =>  $id_hashtags
         ));*/
 
-        file_put_contents(__DIR__ . '/data.php', json_encode($result));
+        file_put_contents(__DIR__ . '/data.json', json_encode($result));
 
         return $result;
     }
@@ -293,10 +292,10 @@ class React extends Fetch
             'userInfo' => $this->getter('users', array('id' => $user_id))
         ));
 
-        $dataJSON = file_get_contents(__DIR__ . '/data.php');
+        $dataJSON = file_get_contents(__DIR__ . '/data.json');
         $data = json_decode($dataJSON, 1);
         $data['publications'][$id]['likes'] = $likes[0]['likes'];
-        file_put_contents(__DIR__ . '/data.php', json_encode($data));
+        file_put_contents(__DIR__ . '/data.json', json_encode($data));
     }
 
     protected function views($data)
@@ -310,10 +309,10 @@ class React extends Fetch
             'data' => $views
         ));
 
-        $dataJSON = file_get_contents(__DIR__ . '/data.php');
+        $dataJSON = file_get_contents(__DIR__ . '/data.json');
         $data = json_decode($dataJSON, 1);
         $data['publications'][$id]['views'] = $views[0]['views'];
-        file_put_contents(__DIR__ . '/data.php', json_encode($data));
+        file_put_contents(__DIR__ . '/data.json', json_encode($data));
     }
 
     protected function addComment($data)
@@ -342,12 +341,12 @@ class React extends Fetch
             'data' => $comments[$id]
         ));
 
-        $dataJSON = file_get_contents(__DIR__ . '/data.php');
+        $dataJSON = file_get_contents(__DIR__ . '/data.json');
         $data = json_decode($dataJSON, 1);
         $data['publications'][$post_id]['comments'] = array_map(function ($item){
             return $item[0];
         }, array_values($comments)) ;
-        file_put_contents(__DIR__ . '/data.php', json_encode($data));
+        file_put_contents(__DIR__ . '/data.json', json_encode($data));
 
     }
 

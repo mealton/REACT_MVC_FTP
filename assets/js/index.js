@@ -58,6 +58,16 @@ const main = {
             const messagesInner = document.querySelector('.messages-inner');
             messagesInner.scrollTop = messagesInner.scrollHeight;
         }
+
+        const postId = publication.id;
+
+        if(postId){
+            const publication = Data.publications[postId];
+            document.querySelectorAll('.nav-item.nav-link').forEach(item => {
+                if(+item.dataset.category === +publication.category)
+                    item.classList.add('active');
+            });
+        }
     },
 
     init() {
@@ -81,9 +91,9 @@ const main = {
         }
 
         const path = window.location.pathname.split('/').filter(el => el !== "" && el !== null);
-        if (path[0] === 'publication' && path[1])
+        if (path[0] === 'publication' && path[1]){
             publication.id = parseInt(path[1]);
-        else if (path[0] === 'category' && path[1]) {
+        }else if (path[0] === 'category' && path[1]) {
             const data = {};
             for (let id in Data.publications) {
                 const row = Data.publications[id];

@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/React.php';
 $react = new React(array('method' => 'init'));
-$hash = file_get_contents(__DIR__ . '/data.php');
-$Data =  $hash ? $hash : json_encode($react->getData());
+$hash = file_get_contents(__DIR__ . '/data.json');
+$Data =  trim($hash) ? $hash : json_encode($react->getData());
 $Data_php = json_decode($Data, 1);
 $path = array_values(array_diff(explode('/', $_SERVER['REQUEST_URI']), array('')));
 

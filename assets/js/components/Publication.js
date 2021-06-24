@@ -114,7 +114,7 @@ const publication = {
 
     id: false,
 
-    show(e){
+    show(e) {
 
         const id = e.currentTarget.getAttribute('data-id');
         const menuCollapse = document.querySelector('.collapse');
@@ -147,12 +147,23 @@ const publication = {
                 window.scrollTo({top: 0, behavior: 'smooth'});
 
             const publication = Data.publications[id];
+
+            document.querySelectorAll('.nav-item.nav-link').forEach(item => {
+                if(+item.dataset.category === +publication.category){
+                    item.classList.add('active');
+                }else{
+                    item.classList.remove('active');
+                    item.classList.add('pointer');
+                }
+            });
+
             const title = publication.short_title;
             const description = publication.description;
             const add = 'publication' + '/' + publication.id + '/' + translit(title);
+
             main.title = title;
 
-            if(!main.playerIsOn)
+            if (!main.playerIsOn)
                 document.title = title;
 
             document.querySelector('meta[name="description"]').setAttribute("content", description);

@@ -24,7 +24,7 @@ const sideBar = {
     sideBar(array) {
         return array.map(row => row === undefined ? false : (
             <div className="popular-item" key={row.id} data-id={row.id} onClick={publication.show}>
-                <img src={document.querySelector('base').href + row.img} className="popular-img" alt=""/>
+                <img src={row.img} className="popular-img" alt=""/>
                 <h4>{row.title}</h4>
                 <p className="align-right">
                     <span className="fa-icon views"/>&nbsp;{row.views}

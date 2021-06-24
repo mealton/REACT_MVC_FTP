@@ -65,6 +65,15 @@ const nav = {
             document.querySelector('meta[name="description"]')
                 .setAttribute("content", 'Публикации категории ' + category);
             historyFunc(add);
+
+            document.querySelectorAll('.nav-item.nav-link').forEach(item => {
+                if(+item.dataset.category === +publication.category){
+                    item.classList.add('active');
+                }else{
+                    item.classList.remove('active');
+                    item.classList.add('pointer');
+                }
+            });
         },
 
         showNav() {
