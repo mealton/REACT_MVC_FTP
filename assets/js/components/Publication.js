@@ -149,9 +149,9 @@ const publication = {
             const publication = Data.publications[id];
 
             document.querySelectorAll('.nav-item.nav-link').forEach(item => {
-                if(+item.dataset.category === +publication.category){
+                if (+item.dataset.category === +publication.category) {
                     item.classList.add('active');
-                }else{
+                } else {
                     item.classList.remove('active');
                     item.classList.add('pointer');
                 }
@@ -253,10 +253,22 @@ const publication = {
         modal.style.display = 'block';
 
         const preventWheel = e => {
-            if (modal.style.display !== 'none')
-                e.preventDefault();
+
+            //Вешаем флажок `1`, чтобы обработчик на колесо мыши не добавлялся впредь
+            modal.setAttribute('listener-wheel', 1);
+
+            if (modal.style.display !== 'none') {
+                e.preventDefault();//запрещаем скролл при открытом модальном окне
+                if (e.deltaY < 0)//заместо скролла листаем картинки
+                    publication.modalImgClick(document.querySelector('.control-left'), e.deltaY < 0);
+                else
+                    publication.modalImgClick(document.querySelector('.control-right'));
+            }
         };
-        window.addEventListener('wheel', preventWheel, {passive: 0});
+
+        //Если обработчик еще не был добавлен - добавляем
+        if(!modal.getAttribute('listener-wheel'))
+            window.addEventListener('wheel', preventWheel, {passive: 0});
 
         modal.onclick = e => {
             if (!closest(e.target, '.publication-modal-inner'))
@@ -265,5 +277,7 @@ const publication = {
 
         document.getElementById('close-modal').onclick = e => modal.style.display = 'none';
 
-    }
+    },
+
+
 };
