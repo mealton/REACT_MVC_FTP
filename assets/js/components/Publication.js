@@ -278,7 +278,6 @@ const publication = {
 
         document.getElementById('close-modal').onclick = e => modal.style.display = 'none';
 
-    },
-
+    }
 
 };
