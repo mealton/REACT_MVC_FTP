@@ -270,6 +270,7 @@ const publication = {
         if(!modal.getAttribute('listener-wheel'))
             window.addEventListener('wheel', preventWheel, {passive: 0});
 
+
         modal.onclick = e => {
             if (!closest(e.target, '.publication-modal-inner'))
                 modal.style.display = 'none';
