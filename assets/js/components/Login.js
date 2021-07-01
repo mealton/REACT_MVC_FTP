@@ -22,6 +22,8 @@ const Logout = () => {
                     <p><b>{userInfo.username}</b></p>
                     <a href="?messenger=1" onClick={messenger.show}><small>Мессенджер</small></a>
                     <br/>
+                    <a href="http://react.mealton.ru/profile/"><small>Кабинет пользователя</small></a>
+                    <br/>
                 </div>
                 <button type="submit" className="btn btn-primary">Выйти</button>
             </form>

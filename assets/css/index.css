@@ -116,6 +116,22 @@ img {
   max-width: 100%;
   margin-bottom: 20px; }
 
+.loader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .2s ease-in-out;
+  color: #000;
+  font-size: 16px;
+  opacity: 0; }
+  .loader.loading {
+    opacity: 1; }
+
 header {
   position: fixed;
   left: 0;
@@ -170,13 +186,25 @@ header {
   bottom: 0;
   width: 300px;
   max-width: 100%;
-  background-color: #f1f3f4;
-  border-radius: 20px 0 0 0; }
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  background: -webkit-gradient(linear, left top, left bottom, from(#444), to(#222));
+  background: -webkit-linear-gradient(top, #444, #222);
+  background: -moz-linear-gradient(top, #444, #222);
+  background: -ms-radial-gradient(top, #444, #222);
+  background: -o-linear-gradient(top, #444, #222);
+  background: linear-gradient(to bottom, #444, #222);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 1.25em rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 1.25em rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 1.25em rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  border: 1px solid #222; }
   #player #playlist {
     width: 100%;
     height: 16px;
     overflow: hidden;
-    background-color: #f1f3f4;
     position: relative;
     transition: all .4s ease-in-out;
     font-size: 11px;
@@ -184,7 +212,6 @@ header {
     #player #playlist .caret {
       line-height: 16px;
       cursor: pointer;
-      padding-right: 10px;
       box-sizing: border-box; }
       #player #playlist .caret:before {
         font-size: 13px;
@@ -254,11 +281,16 @@ header {
         text-align: center; }
         #player #music-player .controls span:before {
           display: inline-block;
+          font-family: FontAwesome, sans-serif;
           font-size: 18px; }
         #player #music-player .controls span#play-pause:before {
-          content: '\23EF'; }
+          content: '\f04b';
+          font-size: 12px; }
+        #player #music-player .controls span#play-pause.paused:before {
+          content: '\f04c'; }
         #player #music-player .controls span#next:before {
-          content: '\23E9'; }
+          content: '\f04e';
+          font-size: 14px; }
     #player #music-player .bar {
       width: calc(100% - 130px);
       text-align: center;
@@ -266,15 +298,23 @@ header {
       padding: 0 5px; }
       #player #music-player .bar #progress-bar {
         width: 100%;
-        height: 3px;
+        height: 5px;
+        border-radius: 5px;
         background-color: #adadad;
         cursor: pointer; }
         #player #music-player .bar #progress-bar #position {
           width: 0;
           height: 100%;
-          background: linear-gradient(to right, rgba(0, 0, 255, 0.51), rgba(255, 71, 25, 0.68));
+          background: -webkit-gradient(linear, left top, right top, from(#007fd1), to(#c600ff));
+          background: -webkit-linear-gradient(left, #007fd1, #c600ff);
+          background: -moz-linear-gradient(left, #007fd1, #c600ff);
+          background: -ms-radial-gradient(left, #007fd1, #c600ff);
+          background: -o-linear-gradient(left, #007fd1, #c600ff);
+          background: linear-gradient(to right, #007fd1, #c600ff);
           transition: width .5s ease-in-out; }
       #player #music-player .bar .marquee {
+        position: relative;
+        top: 5px;
         text-align: left;
         width: 100%;
         overflow: hidden;
@@ -301,10 +341,11 @@ header {
       position: relative;
       text-align: center;
       cursor: pointer;
-      font-size: 12px; }
+      font-size: 14px; }
       #player #music-player .volume:before {
+        font-family: FontAwesome, sans-serif;
         display: block;
-        content: '\1F508'; }
+        content: '\f026'; }
       #player #music-player .volume #level {
         width: 100%;
         height: 0;
@@ -316,7 +357,27 @@ header {
         padding: 10px 5px;
         opacity: 0;
         transition: height, opacity .2s ease-in-out;
-        overflow: hidden; }
+        overflow: hidden;
+        webkit-transition: color .25s ease, background-color .25s ease, opacity .5s ease;
+        -moz-transition: color .25s ease, background-color .25s ease, opacity .5s ease;
+        -ms-transition: color .25s ease, background-color .25s ease, opacity .5s ease;
+        -o-transition: color .25s ease, background-color .25s ease, opacity .5s ease;
+        transition: color .25s ease, background-color .25s ease, opacity .5s ease;
+        -webkit-border-top-left-radius: 2px;
+        -webkit-border-top-right-radius: 2px;
+        -moz-border-radius-topleft: 2px;
+        -moz-border-radius-topright: 2px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        background: -webkit-gradient(linear, left top, left bottom, from(#444), to(#222));
+        background: -webkit-linear-gradient(top, #444, #222);
+        background: -moz-linear-gradient(top, #444, #222);
+        background: -ms-radial-gradient(top, #444, #222);
+        background: -o-linear-gradient(top, #444, #222);
+        background: linear-gradient(to bottom, #444, #222);
+        -webkit-box-shadow: -2px -2px 2px rgba(0, 0, 0, 0.15), 2px -2px 2px rgba(0, 0, 0, 0.15);
+        -moz-box-shadow: -2px -2px 2px rgba(0, 0, 0, 0.15), 2px -2px 2px rgba(0, 0, 0, 0.15);
+        box-shadow: -2px -2px 2px rgba(0, 0, 0, 0.15), 2px -2px 2px rgba(0, 0, 0, 0.15); }
         #player #music-player .volume #level.visible {
           opacity: 1;
           height: 100px; }
@@ -328,7 +389,16 @@ header {
           width: 4px;
           height: 90px;
           background-color: #1971ff;
-          transition: height, opacity .2s ease-in-out; }
+          transition: height, opacity .2s ease-in-out;
+          background: -webkit-gradient(linear, left bottom, left top, from(#007fd1), to(#c600ff));
+          background: -webkit-linear-gradient(bottom, #007fd1, #c600ff);
+          background: -moz-linear-gradient(bottom, #007fd1, #c600ff);
+          background: -ms-radial-gradient(bottom, #007fd1, #c600ff);
+          background: -o-linear-gradient(bottom, #007fd1, #c600ff);
+          background: linear-gradient(to top, #007fd1, #c600ff);
+          -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+          -moz-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+          box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5); }
     #player #music-player .time {
       text-align: center;
       white-space: nowrap;
@@ -778,6 +848,27 @@ form.auth {
       box-sizing: border-box;
       display: inline-block;
       background-color: rgba(125, 255, 253, 0.4); }
+
+.profile main {
+  grid-template-columns: 300px 1fr; }
+.profile .form-group.settings {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 10px; }
+.profile .btn {
+  position: relative; }
+.profile .content-item {
+  position: relative;
+  padding: 30px 0 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ededed; }
+  .profile .content-item .controls {
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer; }
+  .profile .content-item .form-control {
+    display: none; }
 
 @media screen and (max-width: 1440px) {
   main {

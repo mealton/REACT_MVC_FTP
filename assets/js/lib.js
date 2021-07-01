@@ -22,7 +22,7 @@ function formExecute(form) {
     const data = {};
     for (let i in fields) {
         let field = fields[i];
-        if (['TEXTAREA', 'INPUT'].indexOf(field.tagName) !== -1 && field.type !== 'submit') {
+        if (['SELECT', 'TEXTAREA', 'INPUT'].includes(field.tagName) && field.type !== 'submit') {
             if (field.type === 'checkbox')
                 data[field.name] = field.checked;
             else if (field.type === 'radio' && !field.checked)
@@ -191,7 +191,6 @@ function publicationMediaCounter(id) {
 }
 
 function jrumble(element, duration = 800) {
-    console.log(element);
     $(element).jrumble({x: 4, y: 0, rotation: 0, speed: 0}).trigger('startRumble');
     setTimeout(() => $(element).trigger('stopRumble'), duration);
 }

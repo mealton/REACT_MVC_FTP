@@ -3,13 +3,13 @@
 class Fetch
 {
 
-    public function __construct($data)
+    public function __construct($data = [])
     {
         require_once __DIR__ . '/config.php';
         /**
          * @var $config array
          */
-        $method = strval($data['method']);
+        $method = $data['method'] ? strval($data['method']) : 'init';
         if (!method_exists($this, $method)) {
             json(array('result' => false, 'message' => 'Запрашиваемый метод отсутствует', 'data' => $data));
             return false;
@@ -193,6 +193,7 @@ function fetch_init($className)
 function json($data)
 {
     echo json_encode($data);
+    return 1;
 }
 
 function pre($data)
@@ -359,6 +360,49 @@ function curl($url, $cookie = false)
 
 }
 
+function curl_post($url, $query = array(), $headers = array("content-type: application/json"))
+{
+    $ch = curl_init();
+    curl_setopt_array($ch,
+        array(
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $query
+        ));
+    $response = curl_exec($ch);
+    $err = curl_error($ch);
+    curl_close($ch);
+
+    if ($err)
+        return array('error' => "cURL Error #:" . $err);
+
+    return is_array(json_decode($response, 1)) ? json_decode($response, 1) : $response;
+}
+
+function curl_get($url, $headers = array())
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_HTTPHEADER => $headers,
+    ));
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+    return is_array(json_decode($response, 1)) ? json_decode($response, 1) : $response;
+}
+
 
 function curl_query($url, $query = array(), $headers = array())
 {
@@ -373,7 +417,7 @@ function curl_query($url, $query = array(), $headers = array())
     return $response;
 }
 
-function curl_get($url, $headers = array())
+/*function curl_get($url, $headers = array())
 {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -381,7 +425,7 @@ function curl_get($url, $headers = array())
     $response = curl_exec($ch);
     curl_close($ch);
     return $response;
-}
+}*/
 
 
 function file_force_download($file_path, $filename = false, $ctype = false)
@@ -526,4 +570,40 @@ function normJsonStr($str)
 {
     $str = preg_replace_callback('/\\\\u([a-f0-9]{4})/i', create_function('$m', 'return chr(hexdec($m[1])-1072+224);'), $str);
     return iconv('cp1251', 'utf-8', $str);
+}
+
+
+
+function GET($url, $headers = array())
+{
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    $err = curl_error($ch);
+    curl_close($ch);
+    if ($err)
+        return array('error' => "cURL Error #:" . $err);
+    return is_array(json_decode($response, 1)) ? json_decode($response, 1) : $response;
+}
+
+function POST($url, $query = array(), $headers = array("content-type: application/json"))
+{
+    $ch = curl_init();
+    curl_setopt_array($ch,
+        array(
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $query
+        ));
+    $response = curl_exec($ch);
+    $err = curl_error($ch);
+    curl_close($ch);
+
+    if ($err)
+        return array('error' => "cURL Error #:" . $err);
+
+    return is_array(json_decode($response, 1)) ? json_decode($response, 1) : $response;
 }

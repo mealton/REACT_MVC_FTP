@@ -202,6 +202,25 @@ img {
   }
 }
 
+.loader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .2s ease-in-out;
+  color: #000;
+  font-size: 16px;
+  opacity: 0;
+
+  &.loading {
+    opacity: 1;
+  }
+}
+
 //COMPONENTS
 @import "components/header";
 @import "components/player";
@@ -213,6 +232,7 @@ img {
 @import "components/comments";
 @import "components/login";
 @import "components/messenger";
+@import "components/profile";
 
 //MEDIA-QUERIES
 @import "@media/laptop";

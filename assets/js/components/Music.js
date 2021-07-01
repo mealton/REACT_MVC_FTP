@@ -123,7 +123,7 @@ const music = {
 
         const callback = response => {
             const titleElement = document.getElementById('title');
-            console.log(response.title);
+            //console.log(response.title);
             if (response.title && titleElement.innerHTML !== response.title)
                 document.title = titleElement.innerHTML = response.title;
         };
@@ -142,7 +142,8 @@ const music = {
 
     onPause(){
         clearInterval(music.getRadioTitleInterval);
-        document.title = main.title;
+        document.title = main.title ? main.title : 'Все публикации';
+        document.getElementById('play-pause').classList.remove('paused');
         main.playerIsOn = 0;
     },
 
@@ -151,6 +152,8 @@ const music = {
         ym(76319608, 'reachGoal', 'music');
 
         main.playerIsOn = 1;
+
+        document.getElementById('play-pause').classList.add('paused');
 
         music.playInterval = setInterval(() => {
             const audio = document.getElementById('audio');

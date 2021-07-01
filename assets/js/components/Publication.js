@@ -44,7 +44,7 @@ const Publication = props => {
             <PublicationsNav id={props.publication.id}/>
             <div className="description">
                 <div className="tags">
-                    <Tags tags={props.publication.tags}/>
+                    <Tags tags={props.publication.tags ? props.publication.tags : []}/>
                 </div>
                 <div className="flex">
                     <div className="flex-item">
@@ -82,7 +82,7 @@ const Publication = props => {
                 {props.publication.content.map(row => {
                     switch (row.tag_category) {
                         case('image'):
-                            return <img key={row.id} src={row.content} alt="" onClick={publication.showModalImg}/>;
+                            return <img key={row.id} src={ row.content.match(/^\//) ? row.content : '/' + row.content } alt="" onClick={publication.showModalImg}/>;
                         case ('text'):
                             return <p key={row.id}>{row.content}</p>;
                         case ('subtitle'):

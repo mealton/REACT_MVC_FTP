@@ -35,7 +35,6 @@ const main = {
         }
 
         //Преобразование строковых тегов в html элементы
-
         document.querySelectorAll('#public-content p, .message-item p').forEach(
             item => {
                 const e = document.createElement('span');
@@ -51,6 +50,7 @@ const main = {
             sidebar.classList.add('fixed');
             sidebar.style.left = left + 'px';
             sidebar.style.width = width + 'px';
+            sidebar.scrollTop = 0;
         }
 
         //Прокруткасообщений вниз
@@ -119,3 +119,7 @@ const main = {
 };
 
 main.init();
+
+$(window).resize( () => {
+    main.afterRender();
+});

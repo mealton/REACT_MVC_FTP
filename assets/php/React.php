@@ -15,27 +15,29 @@ class React extends Fetch
             json(array('title' => false));
             return false;
         }
-        switch ($title) {
-            case ("Absolute 70's Pop Radio"):
-                $content = curl('https://onlineradiobox.com/ch/1fmabsolute70popradio/playlist/?lang=en');
-                $content = substr($content, strpos($content, '<tr	class="active">'));
-                $title = substr($content, strpos($content, '<td>'));
-                $title = substr($title, 0, strpos($title, '</td>'));
-                $title = strip_tags(htmlspecialchars_decode($title));
-                break;
-            case("Кузбасс ФМ"):
-                $content = curl('http://kuzbassfm.ru');
-                $content = substr($content, strpos($content, '<li class="now">'));
-                $content = substr($content, 0, strpos($content, '<li class="old">'));
-                //$time = substr($content, strpos($content, '<strong class="time">') + 21);
-                //$time = substr($time, 0, strpos($time, '</strong>'));
-                $title = substr($content, strpos($content, '<div>') + 5);
-                $title = str_replace('<br/>', ' - ', substr($title, 0, strpos($title, '</div>')));
-                break;
-            default:
-                $title = false;
+
+        if ($title == "Кузбасс ФМ") {
+            $content = curl('http://kuzbassfm.ru');
+            $content = substr($content, strpos($content, '<li class="now">'));
+            $content = substr($content, 0, strpos($content, '<li class="old">'));
+            $title = substr($content, strpos($content, '<div>') + 5);
+            $title = str_replace('<br/>', ' - ', substr($title, 0, strpos($title, '</div>')));
+        } else {
+            switch ($title) {
+                case ("Absolute 70's Pop Radio"):
+                    $content = curl('https://onlineradiobox.com/ch/1fmabsolute70popradio/playlist/?lang=en');
+                    break;
+                case ("Rock FM 90s"):
+                    $content = curl('https://onlineradiobox.com/ru/rockfm90s/?cs=ru.rockfm90s&played=1');
+                    break;
+            }
+
+            $content = substr($content, strpos($content, '<tr	class="active">'));
+            $title = substr($content, strpos($content, '<td>'));
+            $title = substr($title, 0, strpos($title, '</td>'));
+            $title = strip_tags(htmlspecialchars_decode($title));
         }
-        json(array('title' => $title));
+        json(array('title' => htmlspecialchars_decode($title, ENT_NOQUOTES)));
         return true;
     }
 
@@ -70,7 +72,7 @@ class React extends Fetch
 
         $user_id = intval($_SESSION['auth']['id']);
 
-        if($user_id){
+        if ($user_id) {
             $sql = 'SELECT 
                         `to_user`, 
                         `from_user`,
@@ -85,14 +87,14 @@ class React extends Fetch
                         `messenger`.`status` = 1';
             $fetch = database::getInstance()->Select($sql);
             $messenger_users = array();
-            foreach ($fetch as $row){
-                if($row['to_user'] == $user_id){
+            foreach ($fetch as $row) {
+                if ($row['to_user'] == $user_id) {
                     $messenger_users[$row['from_user']] = array(
                         'id' => $row['from_user'],
                         'username' => $row['username'],
                         'profile_image' => $row['profile_image']
                     );
-                }else{
+                } else {
                     $messenger_users[$row['to_user']] = array(
                         'id' => $row['to_user'],
                         'username' => $row['username'],
@@ -108,14 +110,14 @@ class React extends Fetch
                         AND `status` = 1';
             $messages = array();
             $fetch = database::getInstance()->Select($sql);
-            foreach ($fetch as $row){
-                if($row['to_user'] == $user_id){
-                    if($messages[$row['from_user']])
+            foreach ($fetch as $row) {
+                if ($row['to_user'] == $user_id) {
+                    if ($messages[$row['from_user']])
                         $messages[$row['from_user']][] = $row;
                     else
                         $messages[$row['from_user']] = array($row);
-                }else{
-                    if($messages[$row['to_user']])
+                } else {
+                    if ($messages[$row['to_user']])
                         $messages[$row['to_user']][] = $row;
                     else
                         $messages[$row['to_user']] = array($row);
@@ -212,7 +214,7 @@ class React extends Fetch
             <priority>1.0</priority>
         </url>';
 
-        foreach ($data['publications'] as $row){
+        foreach ($data['publications'] as $row) {
             $xml .=
                 '<url>
                     <loc>' . $site_url . '/publication/' . $row['id'] . '/' . translit($row['short_title']) . '.html</loc>
@@ -221,7 +223,7 @@ class React extends Fetch
                 </url>';
         }
 
-        foreach ($data['rubrics'] as $row){
+        foreach ($data['rubrics'] as $row) {
             $xml .=
                 '<url>
                     <loc>' . $site_url . '/category/' . $row['id'] . '/' . translit($row['rubric_name']) . '.html</loc>
@@ -230,7 +232,7 @@ class React extends Fetch
                 </url>';
         }
 
-        foreach ($data['tags'] as $row){
+        foreach ($data['tags'] as $row) {
             $xml .=
                 '<url>
                     <loc>' . $site_url . '/hashtags/' . $row['id'] . '/' . translit($row['hashtag']) . '.html</loc>
@@ -343,9 +345,9 @@ class React extends Fetch
 
         $dataJSON = file_get_contents(__DIR__ . '/data.json');
         $data = json_decode($dataJSON, 1);
-        $data['publications'][$post_id]['comments'] = array_map(function ($item){
+        $data['publications'][$post_id]['comments'] = array_map(function ($item) {
             return $item[0];
-        }, array_values($comments)) ;
+        }, array_values($comments));
         file_put_contents(__DIR__ . '/data.json', json_encode($data));
 
     }
@@ -359,8 +361,8 @@ class React extends Fetch
         $user = $this->getter('users', array('username' => $username, 'password' => $password));
         if (!empty($user))
             $_SESSION['auth'] = $user[0];
-            setcookie("username", $user[0]['username'], time() + 30 * 24 * 3600, "/");
-            setcookie("password", $user[0]['password'], time() + 30 * 24 * 3600, "/");
+        setcookie("username", $user[0]['username'], time() + 30 * 24 * 3600, "/");
+        setcookie("password", $user[0]['password'], time() + 30 * 24 * 3600, "/");
         json(array(
             'result' => !empty($user),
             'userData' => $_SESSION['auth']
@@ -378,20 +380,212 @@ class React extends Fetch
 
     protected function sendMessage($data)
     {
-        if(!$data['to_user'] || !$data['from_user']){
+        if (!$data['to_user'] || !$data['from_user']) {
             json(array('result' => 0, 'warning' => 'Ошибка! Не задан отправить, либо получатель собщения!'));
             return false;
         }
 
         $id = $this->insert('messenger', $data);
-        if($id){
+        if ($id) {
             json(array('result' => 1, 'message' => $this->getter('messenger', array('id' => $id))));
-        }else{
+        } else {
             json(array('result' => 0, 'warning' => 'Сообщение не отправлено'));
         }
         return 1;
     }
-}
 
+
+    //Импорт публикаций
+    protected function upload_url($data, $return = 0)
+    {
+        $url = trim(strval($data['url']));
+        if (!$url) {
+            echo json_encode(['result' => 0, 'warning' => 'Нет url']);
+            return false;
+        }
+
+        if (preg_match('/data\:/', $url)) {
+            $url = end(explode(',', $url));
+            $image = base64_decode($url);
+        } else {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            $image = curl_exec($ch);
+            curl_close($ch);
+        }
+
+        $fileName = time() . rand(0, 100000) . time() . '.jpg';
+        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/../../mvc/public_html/assets/uploads/';
+        file_put_contents($upload_dir . $fileName, $image);
+
+        if (!getimagesize($upload_dir . $fileName))
+            unlink($upload_dir . $fileName);
+
+        if ($return)
+            return getimagesize($upload_dir . $fileName) ? 'assets/uploads/' . $fileName : false;
+
+        if (getimagesize($upload_dir . $fileName))
+            echo json_encode(['result' => 1, 'src' => 'assets/uploads/' . $fileName, 'info' => getimagesize($upload_dir . $fileName)]);
+        else
+            echo json_encode(['result' => 0, 'warning' => 'Файл не загружен', 'data' => $data]);
+
+        return 1;
+    }
+
+
+    public function import($data)
+    {
+        $url = strval(urldecode($data['url']));
+        $response = curl($url);
+
+        require_once __DIR__ . '/vendor/simpleHTMLDOM/simple_html_dom.php';
+
+        $html = new simple_html_dom();
+        $html->load($response);
+        $tags = array();
+
+        $container_selector = $data['container'] ? $data['container'] : 'body';
+
+        $title = $html->find('title', 0)->innertext;
+        $description = $html->find('meta[name=description]', 0)->content;
+
+        if ($data['tags']) {
+            $tags_element = $html->find($data['tags'], 0);
+            foreach ((array)$tags_element->find('a') as $a)
+                $tags[] = trim($a->innertext);
+        }
+
+        $data = array(
+            'imported' => $data['url'],
+            'title' => $title,
+            'description' => $description,
+            'alias' => translit($title),
+            'hashtags' => preg_replace('/\s{2,}/', ' ', strip_tags(implode(', ', $tags))),
+            'category' => $data['category'],
+            'user_id' => $data['user_id'],
+            'content' => []
+        );
+
+        $container = $html->find($container_selector, 0);
+
+        $url_parse = parse_url($url);
+        $host = $url_parse['scheme'] . '://' . $url_parse['host'] . '/';
+
+
+        foreach ($container->find('img, p') as $item) {
+
+            if (!preg_match('/^http/', $item->src) && !preg_match('/^\/\//', $item->src))
+                $src = $host . $item->src;
+            elseif (preg_match('/^\/\//', $item->src))
+                $src = 'https:' . $item->src;
+            else
+                $src = $item->src;
+
+            if ($item->tag == 'img') {
+                $value = $src;
+                $field = 'image';
+            } else {
+                $value = $item->plaintext;
+                $field = 'text';
+            }
+
+            if ($value)
+                $data['content'][] = array(
+                    'tag_category' => $field,
+                    'content' => $value,
+                );
+
+
+        }
+
+        return json($data);
+    }
+
+    protected function add_post($data)
+    {
+
+        $publication = [
+            'category' => $data['category'],
+            'alias' => $data['alias'],
+            'short_title' => $data['title'],
+            'long_title' => $data['title'],
+            'image_default' => $data['image_default'],
+            'user_id' => $data['user_id'],
+            'description' => $data['description'],
+            'hashtags' => strip_tags($data['hashtags']),
+            'imported' => $data['imported'],
+        ];
+
+        $publication_id = $this->insert('publications', $publication);
+
+        if (!$publication_id)
+            return json([
+                'result' => 0,
+                'data' => $data
+            ]);
+
+
+        //Добавление контента
+        foreach ((array)$data['content'] as $item) {
+
+            //Загрузка изображений
+            if ($item['tag_category'] == 'image') {
+                $item['imgImported'] = $item['content'];
+                $item['content'] = $this->upload_url(['url' => $item['content']], 1);
+            }
+
+            $this->insert(
+                'publications_content',
+                [
+                    'publication_id' => $publication_id,
+                    'tag_category' => $item['tag_category'],
+                    'content' => $item['content'],
+                    'imgImported' => $item['imgImported']
+                ]);
+        }
+
+        //Добавление хештегов
+        $tags = explode(",", $publication['hashtags']);
+
+        foreach ($tags as $tag) {
+            if (trim($tag))
+                $this->insert(
+                    'hashtags',
+                    [
+                        'public_id' => $publication_id,
+                        'hashtag' => trim($tag)
+                    ]);
+        }
+
+
+        //Обновляем файл *.json
+        $dataJSON = file_get_contents(__DIR__ . '/data.json');
+        $data = json_decode($dataJSON, 1);
+
+        $fetch = $this->getter('publications', ['id' => $publication_id]);
+        $content = $this->getter('publications_content', ['publication_id' => $publication_id]);
+
+        $images = array_filter((array)$content, function ($item) {
+            return $item['image'] && $item['content'] !== '';
+        });
+
+        $images = fetch_to_array($images, 'content');
+
+        $publication = $fetch[0];
+        $publication['content'] = $content;
+        $publication['comments'] = array();
+        $publication['image_random'] = !empty($images) ? $images[rand(0, count($images) - 1)] : '';
+        $data['publications'][$publication_id] = $publication;
+
+        file_put_contents(__DIR__ . '/data.json', json_encode($data));
+
+        return json([
+            'result' => 1,
+            'publication' => $publication
+        ]);
+    }
+}
 
 fetch_init('React');
