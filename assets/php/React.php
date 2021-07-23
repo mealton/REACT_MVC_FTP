@@ -8,6 +8,11 @@ class React extends Fetch
     {
     }
 
+    private $decode = [
+        '&#39;' => "'",
+        '&quot;' => '"'
+    ];
+
     protected function getRadioTitle($data)
     {
         $title = strval(trim($data['title']));
@@ -32,12 +37,11 @@ class React extends Fetch
                     break;
             }
 
-            $content = substr($content, strpos($content, '<tr	class="active">'));
-            $title = substr($content, strpos($content, '<td>'));
-            $title = substr($title, 0, strpos($title, '</td>'));
-            $title = strip_tags(htmlspecialchars_decode($title));
+            $content = substr($content, strpos($content, '<td class="track_history_item">') + 31);
+            $title = substr($content, 0, strpos($content, '</td>'));
+            $title = str_replace(array_keys($this->decode), array_values($this->decode), strip_tags($title));
         }
-        json(array('title' => htmlspecialchars_decode($title, ENT_NOQUOTES)));
+        json(array('title' => htmlspecialchars_decode($title, ENT_QUOTES)));
         return true;
     }
 
@@ -373,6 +377,8 @@ class React extends Fetch
     {
         session_start();
         unset($_SESSION['auth']);
+        setcookie("username", 0, time() - 30 * 24 * 3600, "/");
+        setcookie("password", 0, time() - 30 * 24 * 3600, "/");
         json(array(
             'result' => !isset($_SESSION['auth'])
         ));
@@ -392,6 +398,23 @@ class React extends Fetch
             json(array('result' => 0, 'warning' => 'Сообщение не отправлено'));
         }
         return 1;
+    }
+
+
+    public static function upload_files($files)
+    {
+
+        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/../../mvc/public_html/assets/uploads/';
+        $uploaded = array();
+
+        for ($i = 0; $i < count($files['file']['tmp_name']); $i++) {
+            $ext = end(explode('.', $files['file']['name'][$i]));
+            $fileName = time() . rand(0, 100000) . time() . '.' . $ext;
+            if (move_uploaded_file($files['file']['tmp_name'][$i], $upload_dir . $fileName))
+                array_push($uploaded, 'assets/uploads/' . $fileName);
+        }
+
+        echo json_encode($uploaded);
     }
 
 
@@ -528,39 +551,73 @@ class React extends Fetch
 
 
         //Добавление контента
-        foreach ((array)$data['content'] as $item) {
+        $this->add_content($data['content'], $publication_id);
+
+        //Добавление хештегов
+        $this->add_hashtags($publication['hashtags'], $publication_id);
+
+        //Обновляем файл *.json
+        $this->updateJSON($publication_id);
+
+        return json([
+            'result' => 1,
+            'publication' => $publication
+        ]);
+
+    }
+
+
+    private function add_content($content, $publication_id)
+    {
+        $result = 1;
+        foreach ((array)$content as $item) {
 
             //Загрузка изображений
-            if ($item['tag_category'] == 'image') {
+            $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/../../mvc/public_html/';
+            if ($item['tag_category'] == 'image' && !file_exists($upload_dir . $item['content'])) {
                 $item['imgImported'] = $item['content'];
                 $item['content'] = $this->upload_url(['url' => $item['content']], 1);
             }
 
-            $this->insert(
+            $temp_result = $this->insert(
                 'publications_content',
                 [
                     'publication_id' => $publication_id,
                     'tag_category' => $item['tag_category'],
                     'content' => $item['content'],
-                    'imgImported' => $item['imgImported']
+                    'imgImported' => $item['imgImported'],
+                    'token' => $item['token']
                 ]);
+
+            if (!$temp_result)
+                $result = 0;
         }
 
-        //Добавление хештегов
-        $tags = explode(",", $publication['hashtags']);
+        return $result;
+    }
+
+    private function add_hashtags($tags, $publication_id, $token = 0)
+    {
+        $tags = explode(",", $tags);
+        $result = 1;
 
         foreach ($tags as $tag) {
             if (trim($tag))
-                $this->insert(
+                $temp_result = $this->insert(
                     'hashtags',
                     [
                         'public_id' => $publication_id,
-                        'hashtag' => trim($tag)
+                        'hashtag' => trim($tag),
+                        'token' => $token
                     ]);
+            if (!$temp_result)
+                $result = 0;
         }
+        return $result;
+    }
 
-
-        //Обновляем файл *.json
+    private function updateJSON($publication_id)
+    {
         $dataJSON = file_get_contents(__DIR__ . '/data.json');
         $data = json_decode($dataJSON, 1);
 
@@ -580,12 +637,82 @@ class React extends Fetch
         $data['publications'][$publication_id] = $publication;
 
         file_put_contents(__DIR__ . '/data.json', json_encode($data));
+    }
+
+
+    protected function update_post($data)
+    {
+
+        if (!(int)$data['id'])
+            return json([
+                'result' => 0,
+                'warning' => 'Отсутсвует Id'
+            ]);
+
+        $token = rand(0, 100000000);
+
+        $publication_id = (int)$data['id'];
+
+        $publication = [
+            'category' => $data['category'],
+            'alias' => $data['alias'],
+            'short_title' => $data['title'],
+            'long_title' => $data['title'],
+            'image_default' => $data['image_default'],
+            'user_id' => $data['user_id'],
+            'description' => $data['description'],
+            'hashtags' => strip_tags($data['hashtags']),
+            'imported' => $data['imported'],
+            'token' => $token
+        ];
+
+        $result = $this->update('publications', $publication, $publication_id);
+
+        if ($result) {
+
+            foreach ($data['content'] as $i => $item)
+                $data['content'][$i]['token'] = $token;
+
+            //Добавление контента
+            $result = $this->add_content($data['content'], $publication_id);
+
+            if ($result) {
+                $sql = 'DELETE 
+                        FROM `publications_content` 
+                        WHERE 
+                        `publication_id` = ' . $publication_id . ' AND
+                        `token` != ' . $token;
+                database::getInstance()->Query($sql);
+            }
+
+            foreach ($data['hashtags'] as $i => $item)
+                $data['hashtags'][$i]['token'] = $token;
+
+            //Добавление хештегов
+            $result = $this->add_hashtags($publication['hashtags'], $publication_id, $token);
+
+            if ($result) {
+                $sql = 'DELETE
+                         FROM `hashtags`
+                         WHERE
+                         `public_id` = ' . $publication_id . ' AND
+                         `token` != ' . $token;
+                database::getInstance()->Query($sql);
+            }
+
+            //Обновляем файл *.json
+            $this->updateJSON($publication_id);
+        }
+
+        $publication['id'] = $publication_id;
 
         return json([
-            'result' => 1,
+            'result' => $result,
             'publication' => $publication
         ]);
+
     }
+
 }
 
 fetch_init('React');

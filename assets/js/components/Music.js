@@ -1,5 +1,6 @@
 const Music = props => (
     <div id="player">
+        <i className='fa fa-external-link-square maximize' onClick={music.maximize} aria-hidden='true'/>
         <div id="playlist">
             <div className="align-right caret" title="Открыть плейлист" onClick={music.openPlaylist}/>
             <div className="albums clearfix">
@@ -123,7 +124,7 @@ const music = {
 
         const callback = response => {
             const titleElement = document.getElementById('title');
-            //console.log(response.title);
+            console.log(response.title);
             if (response.title && titleElement.innerHTML !== response.title)
                 document.title = titleElement.innerHTML = response.title;
         };
@@ -133,6 +134,16 @@ const music = {
     },
 
     timeDesc(e) {
+        const audio = document.getElementById('audio');
+        const base = document.querySelector('base').href;
+        const reg = new RegExp(base, 'gi');
+        const src = decodeURI(audio.src);
+        const srcClear = src.replace(reg, '/');
+        const item = Data.music.find(row => row.src === srcClear);
+
+        if(parseInt(item.is_radio) === 1)
+            return false;
+
         const timePosition = document.getElementById('time-position');
         if (timePosition.classList.contains('desc'))
             timePosition.classList.remove('desc');
@@ -179,7 +190,10 @@ const music = {
 
         const title = document.getElementById('title');
 
+        const timePosition = document.getElementById('time-position');
+
         if (parseInt(item.is_radio) === 1) {
+            timePosition.classList.remove('desc');
             music.getRadioTitleInterval = setInterval(() => music.getRadioTitle(item.title), 1000);
         } else {
             const li = document.querySelector('#playlist .active');
@@ -299,4 +313,26 @@ const music = {
             audio.play();
         }
     },
+
+    maximize(e){
+
+        const icon = e.target;
+        const player = closest(icon, '#player');
+        const main = document.querySelector('main');
+
+        if(icon.classList.contains('maximize')){
+            player.classList.add('maximized');
+            player.style.width = main.offsetWidth + 'px';
+            player.style.left = main.offsetLeft + 'px';
+            icon.classList.remove('maximize');
+            icon.classList.add('minimize');
+        }else{
+            player.classList.remove('maximized');
+            player.style.width = screen.width < 600 ? '100%' : '300px';
+            player.style.left = 'initial';
+            icon.classList.remove('minimize');
+            icon.classList.add('maximize');
+        }
+
+    }
 };

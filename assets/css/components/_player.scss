@@ -5,6 +5,31 @@
   width: 300px;
   max-width: 100%;
 
+  .fa-external-link-square {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    font-size: 10px;
+    cursor: pointer;
+    z-index: 5;
+
+    &.maximize {
+      transform: scale(-1, 1);
+    }
+
+    &.minimize {
+      transform: scale(1, -1);
+    }
+  }
+
+  &.maximized{
+    top: 100px;
+    max-width: 95%;
+    bottom: initial;
+    right: initial;
+    z-index: 99;
+  }
+
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -318,4 +343,5 @@
       line-height: 1;
     }
   }
+
 }

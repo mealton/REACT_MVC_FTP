@@ -24,11 +24,104 @@
       right: 0;
       top: 0;
       cursor: pointer;
+
+      .edit-menu {
+        position: absolute;
+        right: 5px;
+        top: 30px;
+        background-color: #F3F3F3;
+        font-size: 15px;
+        padding: 5px 10px;
+        -webkit-box-shadow: 7px 7px 5px 0 rgba(50, 50, 50, .25);
+        -moz-box-shadow: 7px 7px 5px 0 rgba(50, 50, 50, .25);
+        box-shadow: 7px 7px 5px 0 rgba(50, 50, 50, .25);
+        border-radius: 5px;
+        line-height: 1.6;
+        z-index: 5;
+        list-style-type: none;
+        white-space: nowrap;
+        font-weight: 500;
+
+        &:before {
+          display: inline-block;
+          content: "";
+          transform: rotate(-45deg);
+          width: 10px;
+          height: 10px;
+          position: absolute;
+          right: 18px;
+          top: -5px;
+          background-color: #F3F3F3;
+        }
+
+        .fa[onclick]:hover {
+          color: cornflowerblue;
+        }
+      }
     }
 
-    .form-control{
+    .edited {
       display: none;
     }
 
+    textarea + small {
+      margin-top: 5px;
+
+      .fa {
+        cursor: pointer;
+        margin: 0 1px;
+        border: 1px solid #000;
+        font-size: 12px;
+        padding: 1px;
+        border-radius: 3px;
+        width: 15px;
+        height: 15px;
+        text-align: center;
+        -webkit-box-shadow: 2px 2px 5px 0 rgba(50, 50, 50, .15);
+        -moz-box-shadow: 2px 2px 5px 0 rgba(50, 50, 50, .15);
+        box-shadow: 2px 2px 5px 0 rgba(50, 50, 50, .15);
+        opacity: .5;
+
+        &.active, &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+  }
+
+  mark {
+    padding: 0;
+  }
+
+  .content-item {
+    .fa.fa-picture-o.default {
+      color: green;
+    }
+    .subtitle{
+      text-align: center;
+    }
+    .description{
+      font-size: 14px;
+    }
+  }
+
+  .content-item .uploader {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding-bottom: 15px;
+
+    input {
+      display: block;
+    }
+
+    label {
+      margin: 0 0 0 5px;
+    }
+
+    button {
+      margin-left: 5px;
+    }
   }
 }

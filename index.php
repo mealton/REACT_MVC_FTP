@@ -5,7 +5,6 @@
  * @var $description string
  */
 ?>
-
 <!doctype html>
 <html lang="en">
 <head>

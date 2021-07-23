@@ -201,6 +201,23 @@ header {
   color: #fff;
   text-shadow: 1px 1px 0 #000;
   border: 1px solid #222; }
+  #player .fa-external-link-square {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    font-size: 10px;
+    cursor: pointer;
+    z-index: 5; }
+    #player .fa-external-link-square.maximize {
+      transform: scale(-1, 1); }
+    #player .fa-external-link-square.minimize {
+      transform: scale(1, -1); }
+  #player.maximized {
+    top: 100px;
+    max-width: 95%;
+    bottom: initial;
+    right: initial;
+    z-index: 99; }
   #player #playlist {
     width: 100%;
     height: 16px;
@@ -867,8 +884,73 @@ form.auth {
     right: 0;
     top: 0;
     cursor: pointer; }
-  .profile .content-item .form-control {
+    .profile .content-item .controls .edit-menu {
+      position: absolute;
+      right: 5px;
+      top: 30px;
+      background-color: #F3F3F3;
+      font-size: 15px;
+      padding: 5px 10px;
+      -webkit-box-shadow: 7px 7px 5px 0 rgba(50, 50, 50, 0.25);
+      -moz-box-shadow: 7px 7px 5px 0 rgba(50, 50, 50, 0.25);
+      box-shadow: 7px 7px 5px 0 rgba(50, 50, 50, 0.25);
+      border-radius: 5px;
+      line-height: 1.6;
+      z-index: 5;
+      list-style-type: none;
+      white-space: nowrap;
+      font-weight: 500; }
+      .profile .content-item .controls .edit-menu:before {
+        display: inline-block;
+        content: "";
+        transform: rotate(-45deg);
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        right: 18px;
+        top: -5px;
+        background-color: #F3F3F3; }
+      .profile .content-item .controls .edit-menu .fa[onclick]:hover {
+        color: cornflowerblue; }
+  .profile .content-item .edited {
     display: none; }
+  .profile .content-item textarea + small {
+    margin-top: 5px; }
+    .profile .content-item textarea + small .fa {
+      cursor: pointer;
+      margin: 0 1px;
+      border: 1px solid #000;
+      font-size: 12px;
+      padding: 1px;
+      border-radius: 3px;
+      width: 15px;
+      height: 15px;
+      text-align: center;
+      -webkit-box-shadow: 2px 2px 5px 0 rgba(50, 50, 50, 0.15);
+      -moz-box-shadow: 2px 2px 5px 0 rgba(50, 50, 50, 0.15);
+      box-shadow: 2px 2px 5px 0 rgba(50, 50, 50, 0.15);
+      opacity: .5; }
+      .profile .content-item textarea + small .fa.active, .profile .content-item textarea + small .fa:hover {
+        opacity: 1; }
+.profile mark {
+  padding: 0; }
+.profile .content-item .fa.fa-picture-o.default {
+  color: green; }
+.profile .content-item .subtitle {
+  text-align: center; }
+.profile .content-item .description {
+  font-size: 14px; }
+.profile .content-item .uploader {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding-bottom: 15px; }
+  .profile .content-item .uploader input {
+    display: block; }
+  .profile .content-item .uploader label {
+    margin: 0 0 0 5px; }
+  .profile .content-item .uploader button {
+    margin-left: 5px; }
 
 @media screen and (max-width: 1440px) {
   main {
