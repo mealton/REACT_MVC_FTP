@@ -20,14 +20,47 @@
     &.minimize {
       transform: scale(1, -1);
     }
+
+    @media screen and (max-width: 599px) {
+      display: none;
+    }
   }
 
-  &.maximized{
+  &.maximized {
     top: 100px;
     max-width: 95%;
     bottom: initial;
     right: initial;
     z-index: 99;
+
+    #music-player {
+      .bar {
+        width: calc(100% - 280px);
+      }
+
+      .volume {
+        width: 110px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &:before {
+          margin-right: 10px;
+        }
+
+        #level {
+          opacity: 1;
+          transform: rotate(90deg);
+          transform-origin: center bottom;
+          width: 20px;
+          height: 110px;
+          bottom: 10px;
+          background: none;
+          box-shadow: none;
+        }
+      }
+    }
+
   }
 
   -webkit-border-radius: 2px;

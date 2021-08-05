@@ -326,6 +326,7 @@ const music = {
             player.style.left = main.offsetLeft + 'px';
             icon.classList.remove('maximize');
             icon.classList.add('minimize');
+            music.showVolume();
         }else{
             player.classList.remove('maximized');
             player.style.width = screen.width < 600 ? '100%' : '300px';

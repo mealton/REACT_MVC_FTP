@@ -96,7 +96,7 @@ const Publication = props => {
                             const heigth = width / 1280 * 720;
                             return (<iframe src={'http://www.youtube.com/embed/' + videoId}
                                             key={row.id}
-                                            frameBorder="0"
+                                            frameborder="0"
                                             width={width}
                                             height={heigth}
                                             title="YouTube video player"
